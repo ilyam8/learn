@@ -1,38 +1,61 @@
----
-custom_edit_url: "https://github.com/netdata/netdata/edit/master/collectors/slabinfo.plugin/README.md"
-sidebar_label: "Slabinfo"
-learn_status: "Published"
-toc_max_heading_level: "4"
-learn_rel_path: "Data collection/Linux Systems/Other"
-sidebar_position: "618040"
-slug: "/data-collection/linux-systems/other/slabinfo"
----
+------|:----------|:----|
+| mem.slabmemory | a dimension per cache | B |
+| mem.slabfilling | a dimension per cache | % |
+| mem.slabwaste | a dimension per cache | B |
 
 
-# slabinfo.plugin
 
-SLAB is a cache mechanism used by the Kernel to avoid fragmentation.
+## Alerts
 
-Each internal structure (process, file descriptor, inode...) is stored within a SLAB.
+There are no alerts configured by default for this integration.
 
-## configuring Netdata for slabinfo
 
-The plugin is disabled by default because it collects and displays a huge amount of metrics.
-To enable it set `slabinfo = yes` in the `plugins` section of the `netdata.conf` configuration file.
+## Setup
 
-If you are using [our official native DEB/RPM packages](/docs/installing/native-linux-distribution-packages), you will additionally need to install the `netdata-plugin-slabinfo`
-package using your system package manager.
+### Prerequisites
 
-There is currently no configuration needed for the plugin itself.
+#### Minimum setup
 
-As `/proc/slabinfo` is only readable by root, this plugin is setuid root.
+If you installed `netdata` using a package manager, it is also necessary to install the package `netdata-plugin-slabinfo`.
 
-## For what use
 
-This slabinfo details allows to have clues on actions done on your system.
-In the following screenshot, you can clearly see a `find` done on a ext4 filesystem (the number of `ext4_inode_cache` & `dentry` are rising fast), and a few seconds later, an admin issued a `echo 3 > /proc/sys/vm/drop_cached` as their count dropped.
+### Configuration
 
-![netdata_slabinfo](https://user-images.githubusercontent.com/9157986/64433811-7f06e500-d0bf-11e9-8e1e-087497e61033.png)
+#### File
 
+The configuration file name for this integration is `netdata.conf`.
+Configuration for this specific integration is located in the `[plugins]` section within that file.
+
+The file format is a modified INI syntax. The general structure is:
+
+```ini
+[section1]
+    option1 = some value
+    option2 = some other value
+
+[section2]
+    option3 = some third value
+```
+You can edit the configuration file using the `edit-config` script from the
+Netdata [config directory](/docs/configuring/configuration#the-netdata-config-directory).
+
+```bash
+cd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata
+sudo ./edit-config netdata.conf
+```
+#### Options
+
+
+
+<details><summary>The main configuration file.</summary>
+
+| Name | Description | Default | Required |
+|:----|:-----------|:-------|:--------:|
+| Enable plugin | As described above plugin is disabled by default, this option is used to enable plugin. | no | True |
+
+</details>
+
+#### Examples
+There are no configuration examples.
 
 

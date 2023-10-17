@@ -1,162 +1,194 @@
----
-custom_edit_url: "https://github.com/netdata/go.d.plugin/edit/master/modules/vsphere/README.md"
-sidebar_label: "VMWare Center Servers"
-learn_status: "Published"
-toc_max_heading_level: "4"
-learn_rel_path: "Data collection/Containers and VMs"
-description: "Monitor the health and performance of vCenter servers with zero configuration, per-second metric granularity, and interactive visualizations."
-sidebar_position: "634160"
-slug: "/data-collection/containers-and-vms/vmware-center-servers"
----
+-----------|:----------------|
+| datacenter | Datacenter name |
+| cluster | Cluster name |
+| host | Host name |
+| vm | Virtual Machine name |
+
+Metrics:
+
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| vsphere.vm_cpu_utilization | used | percentage |
+| vsphere.vm_mem_utilization | used | percentage |
+| vsphere.vm_mem_usage | granted, consumed, active, shared | KiB |
+| vsphere.vm_mem_swap_usage | swapped | KiB |
+| vsphere.vm_mem_swap_io | in, out | KiB/s |
+| vsphere.vm_disk_io | read, write | KiB/s |
+| vsphere.vm_disk_max_latency | latency | milliseconds |
+| vsphere.vm_net_traffic | received, sent | KiB/s |
+| vsphere.vm_net_packets | received, sent | packets |
+| vsphere.vm_net_drops | received, sent | packets |
+| vsphere.vm_overall_status | green, red, yellow, gray | status |
+| vsphere.vm_system_uptime | uptime | seconds |
+
+### Per host
+
+These metrics refer to the ESXi host.
+
+Labels:
+
+| Label      | Description     |
+|:-----------|:----------------|
+| datacenter | Datacenter name |
+| cluster | Cluster name |
+| host | Host name |
+
+Metrics:
+
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| vsphere.host_cpu_utilization | used | percentage |
+| vsphere.host_mem_utilization | used | percentage |
+| vsphere.host_mem_usage | granted, consumed, active, shared, sharedcommon | KiB |
+| vsphere.host_mem_swap_io | in, out | KiB/s |
+| vsphere.host_disk_io | read, write | KiB/s |
+| vsphere.host_disk_max_latency | latency | milliseconds |
+| vsphere.host_net_traffic | received, sent | KiB/s |
+| vsphere.host_net_packets | received, sent | packets |
+| vsphere.host_net_drops | received, sent | packets |
+| vsphere.host_net_errors | received, sent | errors |
+| vsphere.host_overall_status | green, red, yellow, gray | status |
+| vsphere.host_system_uptime | uptime | seconds |
 
 
-# vCenter Server collector
 
-[`VMware vCenter Server`](https://www.vmware.com/products/vcenter-server.html) is advanced server management software
-that provides a centralized platform for controlling your VMware vSphere environments.
+## Alerts
 
-This module collects hosts and vms performance statistics from one or more `vCenter` servers depending on configuration.
 
-> **Warning**: The `vsphere` collector cannot re-login and continue collecting metrics after a vCenter reboot.
-> go.d.plugin needs to be restarted.
+The following alerts are available:
 
-## Metrics
+| Alert name  | On metric | Description |
+|:------------|:----------|:------------|
+| [ vsphere_vm_cpu_utilization ](https://github.com/netdata/netdata/blob/master/health/health.d/vsphere.conf) | vsphere.vm_cpu_utilization | Virtual Machine CPU utilization |
+| [ vsphere_vm_mem_usage ](https://github.com/netdata/netdata/blob/master/health/health.d/vsphere.conf) | vsphere.vm_mem_utilization | Virtual Machine memory utilization |
+| [ vsphere_host_cpu_utilization ](https://github.com/netdata/netdata/blob/master/health/health.d/vsphere.conf) | vsphere.host_cpu_utilization | ESXi Host CPU utilization |
+| [ vsphere_host_mem_utilization ](https://github.com/netdata/netdata/blob/master/health/health.d/vsphere.conf) | vsphere.host_mem_utilization | ESXi Host memory utilization |
 
-All metrics have "vsphere." prefix.
 
-| Metric                    |      Scope      |                   Dimensions                    |   Units    |
-|---------------------------|:---------------:|:-----------------------------------------------:|:----------:|
-| vm_cpu_usage_total        | virtual machine |                      used                       | percentage |
-| vm_mem_usage_percentage   | virtual machine |                      used                       | percentage |
-| vm_mem_usage              | virtual machine |        granted, consumed, active, shared        |    KiB     |
-| vm_mem_swap_rate          | virtual machine |                     in, out                     |   KiB/s    |
-| vm_mem_swap               | virtual machine |                     swapped                     |    KiB     |
-| vm_net_bandwidth_total    | virtual machine |                     rx, tx                      |   KiB/s    |
-| vm_net_packets_total      | virtual machine |                     rx, tx                      |  packets   |
-| vm_net_drops_total        | virtual machine |                     rx, tx                      |  packets   |
-| vm_disk_usage_total       | virtual machine |                   read, write                   |   KiB/s    |
-| vm_disk_max_latency       | virtual machine |                     latency                     |     ms     |
-| vm_overall_status         | virtual machine |                     status                      |   status   |
-| vm_system_uptime          | virtual machine |                      time                       |  seconds   |
-| host_cpu_usage_total      |      host       |                      used                       | percentage |
-| host_mem_usage_percentage |      host       |                      used                       | percentage |
-| host_mem_usage            |      host       | granted, consumed, active, shared, sharedcommon |    KiB     |
-| host_mem_swap_rate        |      host       |                     in, out                     |   KiB/s    |
-| host_net_bandwidth_total  |      host       |                     rx, tx                      |   KiB/s    |
-| host_net_packets_total    |      host       |                     rx, tx                      |  packets   |
-| host_net_drops_total      |      host       |                     rx, tx                      |  packets   |
-| host_net_errors_total     |      host       |                     rx, tx                      |   errors   |
-| host_disk_usage_total     |      host       |                   read, write                   |   KiB/s    |
-| host_disk_max_latency     |      host       |                     latency                     |     ms     |
-| host_overall_status       |      host       |                     status                      |   status   |
-| host_system_uptime        |      host       |                      time                       |  seconds   |
+## Setup
 
-## Configuration
+### Prerequisites
 
-Edit the `go.d/vsphere.conf` configuration file using `edit-config` from the
-Netdata [config directory](/docs/configuring/configuration), which is typically at `/etc/netdata`.
+No action required.
+
+### Configuration
+
+#### File
+
+The configuration file name for this integration is `go.d/vsphere.conf`.
+
+
+You can edit the configuration file using the `edit-config` script from the
+Netdata [config directory](/docs/configuring/configuration#the-netdata-config-directory).
 
 ```bash
-cd /etc/netdata # Replace this path with your Netdata config directory
+cd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata
 sudo ./edit-config go.d/vsphere.conf
 ```
+#### Options
 
-Needs only `url`, `username` and `password`. Here is an example for 2 servers:
+The following options can be defined globally: update_every, autodetection_retry.
+
+
+<details><summary>Config options</summary>
+
+| Name | Description | Default | Required |
+|:----|:-----------|:-------|:--------:|
+| update_every | Data collection frequency. | 20 | False |
+| autodetection_retry | Recheck interval in seconds. Zero means no recheck will be scheduled. | 0 | False |
+| url | vCenter server URL. |  | True |
+| host_include | Hosts selector (filter). |  | False |
+| vm_include | Virtual machines selector (filter). |  | False |
+| discovery_interval | Hosts and VMs discovery interval. | 300 | False |
+| timeout | HTTP request timeout. | 20 | False |
+| username | Username for basic HTTP authentication. |  | False |
+| password | Password for basic HTTP authentication. |  | False |
+| proxy_url | Proxy URL. |  | False |
+| proxy_username | Username for proxy basic HTTP authentication. |  | False |
+| proxy_password | Password for proxy basic HTTP authentication. |  | False |
+| not_follow_redirects | Redirect handling policy. Controls whether the client follows redirects. | no | False |
+| tls_skip_verify | Server certificate chain and hostname validation policy. Controls whether the client performs this check. | no | False |
+| tls_ca | Certification authority that the client uses when verifying the server's certificates. |  | False |
+| tls_cert | Client TLS certificate. |  | False |
+| tls_key | Client TLS key. |  | False |
+
+##### host_include
+
+Metrics of hosts matching the selector will be collected.
+
+- Include pattern syntax: "/Datacenter pattern/Cluster pattern/Host pattern".
+- Match pattern syntax: [simple patterns](https://github.com/netdata/netdata/tree/master/libnetdata/simple_pattern#simple-patterns).
+- Syntax:
+
+  ```yaml
+  host_include:
+    - '/DC1/*'           # select all hosts from datacenter DC1
+    - '/DC2/*/!Host2 *'  # select all hosts from datacenter DC2 except HOST2
+    - '/DC3/Cluster3/*'  # select all hosts from datacenter DC3 cluster Cluster3
+  ```
+
+
+##### vm_include
+
+Metrics of VMs matching the selector will be collected.
+
+- Include pattern syntax: "/Datacenter pattern/Cluster pattern/Host pattern/VM pattern".
+- Match pattern syntax: [simple patterns](https://github.com/netdata/netdata/tree/master/libnetdata/simple_pattern#simple-patterns).
+- Syntax:
+
+  ```yaml
+  vm_include:
+    - '/DC1/*'           # select all VMs from datacenter DC
+    - '/DC2/*/*/!VM2 *'  # select all VMs from datacenter DC2 except VM2
+    - '/DC3/Cluster3/*'  # select all VMs from datacenter DC3 cluster Cluster3
+  ```
+
+
+</details>
+
+#### Examples
+
+##### Basic
+
+A basic example configuration.
 
 ```yaml
 jobs:
-  - name: vcenter1
-    url: https://203.0.113.0
-    username: admin@vsphere.local
-    password: somepassword
-    host_include: ['/*']
-    vm_include: ['/*']
+  - name     : vcenter1
+    url      : https://203.0.113.1
+    username : admin@vsphere.local
+    password : somepassword
 
-  - name: vcenter2
-    url: https://203.0.113.10
-    username: admin@vsphere.local
-    password: somepassword
-    host_include: ['/*']
-    vm_include: ['/*']
 ```
+##### Multi-instance
 
-For all available options please see
-module [configuration file](https://github.com/netdata/go.d.plugin/blob/master/config/go.d/vsphere.conf).
+> **Note**: When you define multiple jobs, their names must be unique.
 
-## Hosts/vms filtering
+Collecting metrics from local and remote instances.
 
-Module supports filtering hosts and vms. Filtering options are `host_include` and `vm_include`.
 
-- `host_include` is a list of match patterns: `/Dc pattern[/Cluster pattern/Host pattern]`.
-- `vm_include` is a list of match patterns: `/Dc pattern[/Cluster pattern/Host pattern/VM name]`.
-
-Pattern should start with `/`. It matches name,
-syntax: [simple patterns](https://docs.netdata.cloud/libnetdata/simple_pattern/).
-
-Examples:
+<details><summary>Config</summary>
 
 ```yaml
-    host_include: # filter all hosts
-      - '/!*'
-    vm_include: # allow all vms
-      - '/*'
-```
+jobs:
+  - name     : vcenter1
+    url      : https://203.0.113.1
+    username : admin@vsphere.local
+    password : somepassword
 
-```yaml
-
-host_include: # allow all DC1 datacenter hosts and DC2 datacenter hosts except HOST2
-  - '/DC1/*'
-  - '/DC2/*/!HOST2 *'
-vm_include: # allow all vms from datacenters whose names starts with DC1 and from all hosts except HOST1 and HOST2
-  - '/DC1*/*/!HOST1 !HOST2 */*'
-```  
-
-## Update every
-
-Default `update_every` is 20 seconds, and it doesn't make sense to decrease the value. **VMware real-time statistics are
-generated at the 20-seconds specificity**.
-
-It is likely that 20 seconds is not enough for big installations and the value should be tuned.
-
-To get better view we recommend to run the collector in debug mode and see how much time it will take to collect
-metrics.
-
-Example (all not related debug lines were removed):
+  - name     : vcenter2
+    url      : https://203.0.113.10
+    username : admin@vsphere.local
+    password : somepassword
 
 ```
-[ilyam@pc]$ ./go.d.plugin -d -m vsphere
-[ DEBUG ] vsphere[vsphere] discover.go:94 discovering : starting resource discovering process
-[ DEBUG ] vsphere[vsphere] discover.go:102 discovering : found 3 dcs, process took 49.329656ms
-[ DEBUG ] vsphere[vsphere] discover.go:109 discovering : found 12 folders, process took 49.538688ms
-[ DEBUG ] vsphere[vsphere] discover.go:116 discovering : found 3 clusters, process took 47.722692ms
-[ DEBUG ] vsphere[vsphere] discover.go:123 discovering : found 2 hosts, process took 52.966995ms
-[ DEBUG ] vsphere[vsphere] discover.go:130 discovering : found 2 vms, process took 49.832979ms
-[ INFO  ] vsphere[vsphere] discover.go:140 discovering : found 3 dcs, 12 folders, 3 clusters (2 dummy), 2 hosts, 3 vms, process took 249.655993ms
-[ DEBUG ] vsphere[vsphere] build.go:12 discovering : building : starting building resources process
-[ INFO  ] vsphere[vsphere] build.go:23 discovering : building : built 3/3 dcs, 12/12 folders, 3/3 clusters, 2/2 hosts, 3/3 vms, process took 63.3µs
-[ DEBUG ] vsphere[vsphere] hierarchy.go:10 discovering : hierarchy : start setting resources hierarchy process
-[ INFO  ] vsphere[vsphere] hierarchy.go:18 discovering : hierarchy : set 3/3 clusters, 2/2 hosts, 3/3 vms, process took 6.522µs
-[ DEBUG ] vsphere[vsphere] filter.go:24 discovering : filtering : starting filtering resources process
-[ DEBUG ] vsphere[vsphere] filter.go:45 discovering : filtering : removed 0 unmatched hosts
-[ DEBUG ] vsphere[vsphere] filter.go:56 discovering : filtering : removed 0 unmatched vms
-[ INFO  ] vsphere[vsphere] filter.go:29 discovering : filtering : filtered 0/2 hosts, 0/3 vms, process took 42.973µs
-[ DEBUG ] vsphere[vsphere] metric_lists.go:14 discovering : metric lists : starting resources metric lists collection process
-[ INFO  ] vsphere[vsphere] metric_lists.go:30 discovering : metric lists : collected metric lists for 2/2 hosts, 3/3 vms, process took 275.60764ms
-[ INFO  ] vsphere[vsphere] discover.go:74 discovering : discovered 2/2 hosts, 3/3 vms, the whole process took 525.614041ms
-[ INFO  ] vsphere[vsphere] discover.go:11 starting discovery process, will do discovery every 5m0s
-[ DEBUG ] vsphere[vsphere] collect.go:11 starting collection process
-[ DEBUG ] vsphere[vsphere] scrape.go:48 scraping : scraped metrics for 2/2 hosts, process took 96.257374ms
-[ DEBUG ] vsphere[vsphere] scrape.go:60 scraping : scraped metrics for 3/3 vms, process took 57.879697ms
-[ DEBUG ] vsphere[vsphere] collect.go:23 metrics collected, process took 154.77997ms
+</details>
 
-```
 
-There you can see that discovering took `525.614041ms`, collecting metrics took `154.77997ms`. Discovering is a separate
-thread, it doesn't affect collecting.
-
-`update_every` and `timeout` parameters should be adjusted based on these numbers.
 
 ## Troubleshooting
+
+### Debug Mode
 
 To troubleshoot issues with the `vsphere` collector, run the `go.d.plugin` with the debug option enabled. The output
 should give you clues as to why the collector isn't working.
@@ -179,3 +211,5 @@ should give you clues as to why the collector isn't working.
   ```bash
   ./go.d.plugin -d -m vsphere
   ```
+
+

@@ -1,76 +1,48 @@
----
-custom_edit_url: "https://github.com/netdata/go.d.plugin/edit/master/modules/ntpd/README.md"
-sidebar_label: "NTP daemon"
-learn_status: "Published"
-toc_max_heading_level: "4"
-learn_rel_path: "Data collection/System CLock and NTP"
-sidebar_position: "642080"
-slug: "/data-collection/system-clock-and-ntp/ntp-daemon"
----
-# NTP daemon collector
+------|:----------|:----|
+| ntpd.sys_offset | offset | milliseconds |
+| ntpd.sys_jitter | system, clock | milliseconds |
+| ntpd.sys_frequency | frequency | ppm |
+| ntpd.sys_wander | clock | ppm |
+| ntpd.sys_rootdelay | delay | milliseconds |
+| ntpd.sys_rootdisp | dispersion | milliseconds |
+| ntpd.sys_stratum | stratum | stratum |
+| ntpd.sys_tc | current, minimum | log2 |
+| ntpd.sys_precision | precision | log2 |
 
-## Overview
-
-The NTPd (Network Time Protocol daemon) is an operating system program that maintains the system time in synchronization
-with time-servers using the Network Time Protocol.
-
-This collector monitors the system variables of the local `ntpd` daemon (optional incl. variables of the polled peers)
-using the NTP Control Message Protocol via UDP socket, similar to `ntpq`,
-the [standard NTP query program](https://doc.ntp.org/current-stable/ntpq.html).
-
-## Collected metrics
-
-Metrics grouped by *scope*.
-
-The scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.
-
-### global
-
-These metrics refer to the entire monitored application.
-
-This scope has no labels.
-
-Metrics:
-
-| Metric             |    Dimensions    |     Unit     |
-|--------------------|:----------------:|:------------:|
-| ntpd.sys_offset    |      offset      | milliseconds |
-| ntpd.sys_jitter    |  system, clock   | milliseconds |
-| ntpd.sys_frequency |    frequency     |     ppm      |
-| ntpd.sys_wander    |      clock       |     ppm      |
-| ntpd.sys_rootdelay |      delay       | milliseconds |
-| ntpd.sys_rootdisp  |    dispersion    | milliseconds |
-| ntpd.sys_stratum   |     stratum      |   stratum    |
-| ntpd.sys_tc        | current, minimum |     log2     |
-| ntpd.sys_precision |    precision     |     log2     |
-
-### peer
+### Per peer
 
 These metrics refer to the NTPd peer.
 
 Labels:
 
-| Label        | Description              |
-|--------------|--------------------------|
+| Label      | Description     |
+|:-----------|:----------------|
 | peer_address | peer's source IP address |
 
 Metrics:
 
-| Metric               | Dimensions |     Unit     |
-|----------------------|:----------:|:------------:|
-| ntpd.peer_offset     |   offset   | milliseconds |
-| ntpd.peer_delay      |   delay    | milliseconds |
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| ntpd.peer_offset | offset | milliseconds |
+| ntpd.peer_delay | delay | milliseconds |
 | ntpd.peer_dispersion | dispersion | milliseconds |
-| ntpd.peer_jitter     |   jitter   | milliseconds |
-| ntpd.peer_xleave     |   xleave   | milliseconds |
-| ntpd.peer_rootdelay  | rootdelay  | milliseconds |
-| ntpd.peer_rootdisp   | dispersion | milliseconds |
-| ntpd.peer_stratum    |  stratum   |   stratum    |
-| ntpd.peer_hmode      |   hmode    |    hmode     |
-| ntpd.peer_pmode      |   pmode    |    pmode     |
-| ntpd.peer_hpoll      |   hpoll    |     log2     |
-| ntpd.peer_ppoll      |   ppoll    |     log2     |
-| ntpd.peer_precision  | precision  |     log2     |
+| ntpd.peer_jitter | jitter | milliseconds |
+| ntpd.peer_xleave | xleave | milliseconds |
+| ntpd.peer_rootdelay | rootdelay | milliseconds |
+| ntpd.peer_rootdisp | dispersion | milliseconds |
+| ntpd.peer_stratum | stratum | stratum |
+| ntpd.peer_hmode | hmode | hmode |
+| ntpd.peer_pmode | pmode | pmode |
+| ntpd.peer_hpoll | hpoll | log2 |
+| ntpd.peer_ppoll | ppoll | log2 |
+| ntpd.peer_precision | precision | log2 |
+
+
+
+## Alerts
+
+There are no alerts configured by default for this integration.
+
 
 ## Setup
 
@@ -82,17 +54,8 @@ No action required.
 
 #### File
 
-The configuration file name is `go.d/ntpd.conf`.
+The configuration file name for this integration is `go.d/ntpd.conf`.
 
-The file format is YAML. Generally, the format is:
-
-```yaml
-update_every: 1
-autodetection_retry: 0
-jobs:
-  - name: some_name1
-  - name: some_name1
-```
 
 You can edit the configuration file using the `edit-config` script from the
 Netdata [config directory](/docs/configuring/configuration#the-netdata-config-directory).
@@ -101,21 +64,20 @@ Netdata [config directory](/docs/configuring/configuration#the-netdata-config-di
 cd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata
 sudo ./edit-config go.d/ntpd.conf
 ```
-
 #### Options
 
 The following options can be defined globally: update_every, autodetection_retry.
 
-<details>
-<summary>Config options</summary>
 
-|        Name         | Description                                                        |    Default    | Required |
-|:-------------------:|--------------------------------------------------------------------|:-------------:|:--------:|
-|    update_every     | Data collection frequency.                                         |       1       |          |
-| autodetection_retry | Re-check interval in seconds. Zero means not to schedule re-check. |       0       |          |
-|       address       | Server address in IP:PORT format.                                  | 127.0.0.1:123 |   yes    |
-|       timeout       | Connection/read/write timeout.                                     |       3       |          |
-|    collect_peers    | Determines whether peer metrics will be collected.                 |      no       |          |
+<details><summary>Config options</summary>
+
+| Name | Description | Default | Required |
+|:----|:-----------|:-------|:--------:|
+| update_every | Data collection frequency. | 1 | False |
+| autodetection_retry | Recheck interval in seconds. Zero means no recheck will be scheduled. | 0 | False |
+| address | Server address in IP:PORT format. | 127.0.0.1:123 | True |
+| timeout | Connection/read/write timeout. | 3 | False |
+| collect_peers | Determines whether peer metrics will be collected. | False | False |
 
 </details>
 
@@ -124,30 +86,30 @@ The following options can be defined globally: update_every, autodetection_retry
 ##### Basic
 
 A basic example configuration.
-<details>
-<summary>Config</summary>
+
+<details><summary>Config</summary>
 
 ```yaml
 jobs:
   - name: local
     address: 127.0.0.1:123
-```
 
+```
 </details>
 
 ##### With peers metrics
 
 Collect peers metrics.
-<details>
-<summary>Config</summary>
+
+<details><summary>Config</summary>
 
 ```yaml
 jobs:
   - name: local
     address: 127.0.0.1:123
     collect_peers: yes
-```
 
+```
 </details>
 
 ##### Multi-instance
@@ -156,8 +118,8 @@ jobs:
 
 Collecting metrics from local and remote instances.
 
-<details>
-<summary>Config</summary>
+
+<details><summary>Config</summary>
 
 ```yaml
 jobs:
@@ -166,13 +128,15 @@ jobs:
 
   - name: remote
     address: 203.0.113.0:123
-```
 
+```
 </details>
+
+
 
 ## Troubleshooting
 
-### Debug mode
+### Debug Mode
 
 To troubleshoot issues with the `ntpd` collector, run the `go.d.plugin` with the debug option enabled. The output
 should give you clues as to why the collector isn't working.
@@ -195,3 +159,5 @@ should give you clues as to why the collector isn't working.
   ```bash
   ./go.d.plugin -d -m ntpd
   ```
+
+

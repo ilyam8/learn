@@ -1,79 +1,92 @@
----
-custom_edit_url: "https://github.com/netdata/go.d.plugin/edit/master/modules/isc_dhcpd/README.md"
-sidebar_label: "ISC DHCPd"
-learn_status: "Published"
-toc_max_heading_level: "4"
-learn_rel_path: "Data collection/DNS and DHCP Servers"
-description: "Monitor the health and performance of ISC DHCP servers with zero configuration, per-second metric granularity, and interactive visualizations."
-sidebar_position: "640440"
-slug: "/data-collection/dns-and-dhcp-servers/isc-dhcpd"
----
+------|:----------|:----|
+| isc_dhcpd.active_leases_total | active | leases |
+| isc_dhcpd.pool_active_leases | a dimension per DHCP pool | leases |
+| isc_dhcpd.pool_utilization | a dimension per DHCP pool | percentage |
 
 
-# ISC DHCPd collector
 
-[`ISC DHCP`](https://www.isc.org/dhcp/) is a DHCP server that supports both IPv4 and IPv6, and is suitable for use in
-high-volume and high-reliability applications.
+## Alerts
 
-This module monitors active leases and IP pools utilization collecting data from the DHCP client lease
-database (`dhcpd.leases`).
+There are no alerts configured by default for this integration.
 
-## Requirements
 
-`dhcpd.leases` must be readable by `netdata` user.
+## Setup
 
-## Metrics
+### Prerequisites
 
-All metrics have "isc_dhcps." prefix.
+No action required.
 
-| Metric              | Scope  |            Dimensions            |   Units    |
-|---------------------|:------:|:--------------------------------:|:----------:|
-| active_leases_total | global |              active              |   leases   |
-| pool_active_leases  | global | <i>a dimension per DHCP pool</i> |   leases   |
-| pool_utilization    | global | <i>a dimension per DHCP pool</i> | percentage |
+### Configuration
 
-## Configuration
+#### File
 
-Edit the `go.d/isc_dhcpd.conf` configuration file using `edit-config` from the
-Netdata [config directory](/docs/configuring/configuration), which is typically at `/etc/netdata`.
+The configuration file name for this integration is `go.d/isc_dhcps.conf`.
+
+
+You can edit the configuration file using the `edit-config` script from the
+Netdata [config directory](/docs/configuring/configuration#the-netdata-config-directory).
 
 ```bash
-cd /etc/netdata # Replace this path with your Netdata config directory
-sudo ./edit-config go.d/isc_dhcpd.conf
+cd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata
+sudo ./edit-config go.d/isc_dhcps.conf
+```
+#### Options
+
+The following options can be defined globally: update_every, autodetection_retry.
+
+
+<details><summary>Config options</summary>
+
+| Name | Description | Default | Required |
+|:----|:-----------|:-------|:--------:|
+| update_every | Data collection frequency. | 1 | False |
+| autodetection_retry | Recheck interval in seconds. Zero means no recheck will be scheduled. | 0 | False |
+| leases_path | Path to DHCP client lease database. | /var/lib/dhcp/dhcpd.leases | False |
+| pools | List of IP pools to monitor. |  | True |
+
+##### pools
+
+List of IP pools to monitor.
+
+- IP range syntax: see [supported formats](https://github.com/netdata/go.d.plugin/tree/master/pkg/iprange#supported-formats).
+- Syntax:
+
+```yaml
+pools:
+  - name: "POOL_NAME1"
+    networks: "SPACE SEPARATED LIST OF IP RANGES"
+  - name: "POOL_NAME2"
+    networks: "SPACE SEPARATED LIST OF IP RANGES"
 ```
 
-Needs `leases_path` (path to the DHCP client lease database), and a list of IP pools to monitor. IP pool `networks` is a
-space separated list of [IP ranges](https://github.com/netdata/go.d.plugin/tree/master/pkg/iprange#supported-formats).
 
-Here is a configuration example:
+</details>
+
+#### Examples
+
+##### Basic
+
+A basic example configuration.
+
+<details><summary>Config</summary>
 
 ```yaml
 jobs:
-  - name: ipv4_example
-    leases_path: '/path/to/ipv4_leases_file'
+  - name: local
     pools:
-      - name: office
-        networks: '192.0.2.1-192.0.2.254'
+      - name: lan
+        networks: "192.168.0.0/24 192.168.1.0/24 192.168.2.0/24"
       - name: wifi
-        networks: '198.51.100.0/24'
-      - name: dmz
-        networks: '203.0.113.0/255.255.255.0'
+        networks: "10.0.0.0/24"
 
-  - name: ipv6_example
-    leases_path: '/path/to/ipv6_leases_file'
-    pools:
-      - name: office
-        networks: '2001:0DB8::/64'
-      - name: wifi
-        networks: '2001:0DB8:0:1::/64'
-      - name: dmz
-        networks: '2001:0DB8:0:2::/64'
 ```
+</details>
 
-For all available options, see the ISC dhcpd
-collector's [configuration file](https://github.com/netdata/go.d.plugin/blob/master/config/go.d/isc_dhcpd.conf).
+
 
 ## Troubleshooting
+
+### Debug Mode
 
 To troubleshoot issues with the `isc_dhcpd` collector, run the `go.d.plugin` with the debug option enabled. The output
 should give you clues as to why the collector isn't working.
@@ -96,3 +109,5 @@ should give you clues as to why the collector isn't working.
   ```bash
   ./go.d.plugin -d -m isc_dhcpd
   ```
+
+

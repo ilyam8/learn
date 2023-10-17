@@ -1,151 +1,155 @@
----
-custom_edit_url: "https://github.com/netdata/netdata/edit/master/collectors/python.d.plugin/riakkv/README.md"
-sidebar_label: "Riak KV"
-learn_status: "Published"
-toc_max_heading_level: "4"
-learn_rel_path: "Data collection/Database servers"
-sidebar_position: "646520"
-slug: "/data-collection/database-servers/riak-kv"
----
+------|:----------|:----|
+| riak.kv.throughput | gets, puts | operations/s |
+| riak.dt.vnode_updates | counters, sets, maps | operations/s |
+| riak.search | queries | queries/s |
+| riak.search.documents | indexed | documents/s |
+| riak.consistent.operations | gets, puts | operations/s |
+| riak.kv.latency.get | mean, median, 95, 99, 100 | ms |
+| riak.kv.latency.put | mean, median, 95, 99, 100 | ms |
+| riak.dt.latency.counter_merge | mean, median, 95, 99, 100 | ms |
+| riak.dt.latency.set_merge | mean, median, 95, 99, 100 | ms |
+| riak.dt.latency.map_merge | mean, median, 95, 99, 100 | ms |
+| riak.search.latency.query | median, min, 95, 99, 999, max | ms |
+| riak.search.latency.index | median, min, 95, 99, 999, max | ms |
+| riak.consistent.latency.get | mean, median, 95, 99, 100 | ms |
+| riak.consistent.latency.put | mean, median, 95, 99, 100 | ms |
+| riak.vm | processes | total |
+| riak.vm.memory.processes | allocated, used | MB |
+| riak.kv.siblings_encountered.get | mean, median, 95, 99, 100 | siblings |
+| riak.kv.objsize.get | mean, median, 95, 99, 100 | KB |
+| riak.search.vnodeq_size | mean, median, 95, 99, 100 | messages |
+| riak.search.index | errors | errors |
+| riak.core.protobuf_connections | active | connections |
+| riak.core.repairs | read | repairs |
+| riak.core.fsm_active | get, put, secondary index, list keys | fsms |
+| riak.core.fsm_rejected | get, put | fsms |
+| riak.search.index | bad_entry, extract_fail | writes |
 
 
-# Riak KV collector
 
-Collects database stats from `/stats` endpoint.
+## Alerts
 
-## Requirements
 
--   An accessible `/stats` endpoint. See [the Riak KV configuration reference documentation](https://docs.riak.com/riak/kv/2.2.3/configuring/reference/#client-interfaces)
-    for how to enable this.
+The following alerts are available:
 
-The following charts are included, which are mostly derived from the metrics
-listed
-[here](https://docs.riak.com/riak/kv/latest/using/reference/statistics-monitoring/index.html#riak-metrics-to-graph).
+| Alert name  | On metric | Description |
+|:------------|:----------|:------------|
+| [ riakkv_1h_kv_get_mean_latency ](https://github.com/netdata/netdata/blob/master/health/health.d/riakkv.conf) | riak.kv.latency.get | average time between reception of client GET request and subsequent response to client over the last hour |
+| [ riakkv_kv_get_slow ](https://github.com/netdata/netdata/blob/master/health/health.d/riakkv.conf) | riak.kv.latency.get | average time between reception of client GET request and subsequent response to the client over the last 3 minutes, compared to the average over the last hour |
+| [ riakkv_1h_kv_put_mean_latency ](https://github.com/netdata/netdata/blob/master/health/health.d/riakkv.conf) | riak.kv.latency.put | average time between reception of client PUT request and subsequent response to the client over the last hour |
+| [ riakkv_kv_put_slow ](https://github.com/netdata/netdata/blob/master/health/health.d/riakkv.conf) | riak.kv.latency.put | average time between reception of client PUT request and subsequent response to the client over the last 3 minutes, compared to the average over the last hour |
+| [ riakkv_vm_high_process_count ](https://github.com/netdata/netdata/blob/master/health/health.d/riakkv.conf) | riak.vm | number of processes running in the Erlang VM |
+| [ riakkv_list_keys_active ](https://github.com/netdata/netdata/blob/master/health/health.d/riakkv.conf) | riak.core.fsm_active | number of currently running list keys finite state machines |
 
-1.  **Throughput** in operations/s
 
--   **KV operations**
-    -   gets
-    -   puts
+## Setup
 
--   **Data type updates**
-    -   counters
-    -   sets
-    -   maps
+### Prerequisites
 
--   **Search queries**
-    -   queries
+#### Configure RiakKV to enable /stats endpoint
 
--   **Search documents**
-    -   indexed
+You can follow the RiakKV configuration reference documentation for how to enable this.
 
--   **Strong consistency operations**
-    -   gets
-    -   puts
+Source : https://docs.riak.com/riak/kv/2.2.3/configuring/reference/#client-interfaces
 
-2.  **Latency** in milliseconds
 
--   **KV latency** of the past minute
-    -   get (mean, median, 95th / 99th / 100th percentile)
-    -   put (mean, median, 95th / 99th / 100th percentile)
 
--   **Data type latency** of the past minute
-    -   counter_merge (mean, median, 95th / 99th / 100th percentile)
-    -   set_merge (mean, median, 95th / 99th / 100th percentile)
-    -   map_merge (mean, median, 95th / 99th / 100th percentile)
+### Configuration
 
--   **Search latency** of the past minute
-    -   query (median, min, max, 95th / 99th percentile)
-    -   index (median, min, max, 95th / 99th percentile)
+#### File
 
--   **Strong consistency latency** of the past minute
-    -   get (mean, median, 95th / 99th / 100th percentile)
-    -   put (mean, median, 95th / 99th / 100th percentile)
+The configuration file name for this integration is `python.d/riakkv.conf`.
 
-3.  **Erlang VM metrics**
 
--   **System counters**
-    -   processes
-
--   **Memory allocation** in MB
-    -   processes.allocated
-    -   processes.used
-
-4.  **General load / health metrics**
-
--   **Siblings encountered in KV operations** during the past minute
-    -   get (mean, median, 95th / 99th / 100th percentile)
-
--   **Object size in KV operations** during the past minute in KB
-    -   get (mean, median, 95th / 99th / 100th percentile)
-
--   **Message queue length** in unprocessed messages
-    -   vnodeq_size (mean, median, 95th / 99th / 100th percentile)
-
--   **Index operations** encountered by Search
-    -   errors
-
--   **Protocol buffer connections**
-    -   active
-
--   **Repair operations coordinated by this node**
-    -   read
-
--   **Active finite state machines by kind**
-    -   get
-    -   put
-    -   secondary_index
-    -   list_keys
-
--   **Rejected finite state machines**
-    -   get
-    -   put
-
--   **Number of writes to Search failed due to bad data format by reason**
-    -   bad_entry
-    -   extract_fail
-
-## Configuration
-
-Edit the `python.d/riakkv.conf` configuration file using `edit-config` from the Netdata [config
-directory](/docs/configuring/configuration), which is typically at `/etc/netdata`.
+You can edit the configuration file using the `edit-config` script from the
+Netdata [config directory](/docs/configuring/configuration#the-netdata-config-directory).
 
 ```bash
-cd /etc/netdata   # Replace this path with your Netdata config directory, if different
+cd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata
 sudo ./edit-config python.d/riakkv.conf
 ```
+#### Options
 
-The module needs to be passed the full URL to Riak's stats endpoint.
-For example:
+There are 2 sections:
+
+* Global variables
+* One or more JOBS that can define multiple different instances to monitor.
+
+The following options can be defined globally: priority, penalty, autodetection_retry, update_every, but can also be defined per JOB to override the global values.
+
+Additionally, the following collapsed table contains all the options that can be configured inside a JOB definition.
+
+Every configuration JOB starts with a `job_name` value which will appear in the dashboard, unless a `name` parameter is specified.
+
+
+<details><summary>Config options</summary>
+
+| Name | Description | Default | Required |
+|:----|:-----------|:-------|:--------:|
+| update_every | Sets the default data collection frequency. | 5 | False |
+| priority | Controls the order of charts at the netdata dashboard. | 60000 | False |
+| autodetection_retry | Sets the job re-check interval in seconds. | 0 | False |
+| penalty | Indicates whether to apply penalty to update_every in case of failures. | yes | False |
+| url | The url of the server | no | True |
+
+</details>
+
+#### Examples
+
+##### Basic (default)
+
+A basic example configuration per job
 
 ```yaml
-myriak:
-  url: http://myriak.example.com:8098/stats
+local:
+url: 'http://localhost:8098/stats'
+
 ```
+##### Multi-instance
 
-With no explicit configuration given, the module will attempt to connect to
-`http://localhost:8098/stats`.
+> **Note**: When you define multiple jobs, their names must be unique.
 
-The default update frequency for the plugin is set to 2 seconds as Riak
-internally updates the metrics every second. If we were to update the metrics
-every second, the resulting graph would contain odd jitter.
-### Troubleshooting
+Collecting metrics from local and remote instances.
 
-To troubleshoot issues with the `riakkv` module, run the `python.d.plugin` with the debug option enabled. The 
-output will give you the output of the data collection job or error messages on why the collector isn't working.
 
-First, navigate to your plugins directory, usually they are located under `/usr/libexec/netdata/plugins.d/`. If that's 
-not the case on your system, open `netdata.conf` and look for the setting `plugins directory`. Once you're in the 
-plugin's directory, switch to the `netdata` user.
+<details><summary>Config</summary>
 
-```bash
-cd /usr/libexec/netdata/plugins.d/
-sudo su -s /bin/bash netdata
+```yaml
+local:
+  url: 'http://localhost:8098/stats'
+
+remote:
+  url: 'http://192.0.2.1:8098/stats'
+
 ```
+</details>
 
-Now you can manually run the `riakkv` module in debug mode:
 
-```bash
-./python.d.plugin riakkv debug trace
-```
+
+## Troubleshooting
+
+### Debug Mode
+
+To troubleshoot issues with the `riakkv` collector, run the `python.d.plugin` with the debug option enabled. The output
+should give you clues as to why the collector isn't working.
+
+- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on
+  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.
+
+  ```bash
+  cd /usr/libexec/netdata/plugins.d/
+  ```
+
+- Switch to the `netdata` user.
+
+  ```bash
+  sudo -u netdata -s
+  ```
+
+- Run the `python.d.plugin` to debug the collector:
+
+  ```bash
+  ./python.d.plugin riakkv debug trace
+  ```
+
 

@@ -1158,10 +1158,6 @@
   to="/docs/alerting/notifications/netdata-agent-notifications/sms-server"
 
 [[redirects]]
-  from="/docs/agent/health/notifications/stackpulse"
-  to="/docs/alerting/notifications/netdata-agent-notifications/stackpulse"
-
-[[redirects]]
   from="/docs/agent/health/notifications/syslog"
   to="/docs/alerting/notifications/netdata-agent-notifications/syslog"
 
@@ -1526,10 +1522,6 @@
   to="/docs/miscellaneous/customize-the-standard-dashboard"
 
 [[redirects]]
-  from="/docs/dashboard/dimensions-contexts-families"
-  to="/docs/data-collection/chart-dimensions-contexts-and-families"
-
-[[redirects]]
   from="/docs/dashboard/import-export-print-snapshot"
   to="/docs/miscellaneous/import-export-and-print-a-snapshot"
 
@@ -1552,10 +1544,6 @@
 [[redirects]]
   from="/docs/monitor/enable-notifications"
   to="/docs/alerting/notifications"
-
-[[redirects]]
-  from="/docs/monitor/view-active-alarms"
-  to="/docs/monitor-your-infrastructure/view-active-alerts"
 
 [[redirects]]
   from="/docs/quickstart/infrastructure"
@@ -1646,20 +1634,12 @@
   to="/docs/ml-and-troubleshooting/metric-correlations"
 
 [[redirects]]
-  from="/docs/cloud/manage/invite-your-team"
-  to="/docs/monitor-your-infrastructure/invite-your-team"
-
-[[redirects]]
   from="/docs/cloud/manage/sign-in"
   to="/docs/monitor-your-infrastructure/sign-in-with-email-google-or-github"
 
 [[redirects]]
   from="/docs/cloud/manage/themes"
   to="/docs/monitor-your-infrastructure/choose-your-netdata-cloud-theme"
-
-[[redirects]]
-  from="/docs/cloud/spaces"
-  to="/docs/monitor-your-infrastructure/spaces"
 
 [[redirects]]
   from="/docs/cloud/visualize/dashboards"
@@ -1680,10 +1660,6 @@
 [[redirects]]
   from="/docs/cloud/visualize/overview"
   to="/docs/monitor-your-infrastructure/home-overview-and-single-node-view"
-
-[[redirects]]
-  from="/docs/cloud/war-rooms"
-  to="/docs/monitor-your-infrastructure/war-rooms"
 
 [[redirects]]
   from="/docs/agent/collectors/collectors"
@@ -1904,14 +1880,6 @@
 [[redirects]]
   from="/docs/cloud"
   to="/docs/architecture/the-role-of-netdata-cloud"
-
-[[redirects]]
-  from="/docs/cloud/alerts-notifications/smartboard"
-  to="/docs/monitor-your-infrastructure/view-active-alerts"
-
-[[redirects]]
-  from="/docs/cloud/alerts-notifications/view-active-alerts"
-  to="/docs/monitor-your-infrastructure/view-active-alerts"
 
 [[redirects]]
   from="/docs/cloud/get-started"
@@ -3134,10 +3102,6 @@
   to="/docs/contributing"
 
 [[redirects]]
-  from="/docs/getting-started/monitor-your-infrastructure/war-rooms"
-  to="/docs/monitor-your-infrastructure/war-rooms"
-
-[[redirects]]
   from="/docs/getting-started/monitor-your-infrastructure/visualization-date-and-time-controls"
   to="/docs/monitor-your-infrastructure/visualization-date-and-time-controls"
 
@@ -3146,16 +3110,8 @@
   to="/docs/monitor-your-infrastructure/view-plan-&-billing"
 
 [[redirects]]
-  from="/docs/getting-started/monitor-your-infrastructure/view-active-alerts"
-  to="/docs/monitor-your-infrastructure/view-active-alerts"
-
-[[redirects]]
   from="/docs/getting-started/monitor-your-infrastructure/troubleshoot-agent-cloud-connectivity-issues"
   to="/docs/configuring/troubleshoot-agent-cloud-connectivity-issues"
-
-[[redirects]]
-  from="/docs/getting-started/monitor-your-infrastructure/spaces"
-  to="/docs/monitor-your-infrastructure/spaces"
 
 [[redirects]]
   from="/docs/getting-started/monitor-your-infrastructure/sign-in-with-email-google-or-github"
@@ -3168,10 +3124,6 @@
 [[redirects]]
   from="/docs/getting-started/monitor-your-infrastructure/netdata-plans"
   to="/docs/monitor-your-infrastructure/netdata-plans"
-
-[[redirects]]
-  from="/docs/getting-started/monitor-your-infrastructure/invite-your-team"
-  to="/docs/monitor-your-infrastructure/invite-your-team"
 
 [[redirects]]
   from="/docs/getting-started/monitor-your-infrastructure/interact-with-charts"
@@ -4090,10 +4042,6 @@
   to="/docs/alerting/notifications/netdata-agent-notifications/syslog"
 
 [[redirects]]
-  from="/docs/alerts-and-notifications/notifications/agent-alert-notifications/stackpulse"
-  to="/docs/alerting/notifications/netdata-agent-notifications/stackpulse"
-
-[[redirects]]
   from="/docs/alerts-and-notifications/notifications/agent-alert-notifications/sms-server"
   to="/docs/alerting/notifications/netdata-agent-notifications/sms-server"
 
@@ -4912,10 +4860,6 @@
 [[redirects]]
   from="/docs/alerts-and-notifications/notifications/netdata-agent-notifications/syslog"
   to="/docs/alerting/notifications/netdata-agent-notifications/syslog"
-
-[[redirects]]
-  from="/docs/alerts-and-notifications/notifications/netdata-agent-notifications/stackpulse"
-  to="/docs/alerting/notifications/netdata-agent-notifications/stackpulse"
 
 [[redirects]]
   from="/docs/alerts-and-notifications/notifications/netdata-agent-notifications/sms-server"

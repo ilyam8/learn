@@ -1,80 +1,139 @@
----
-custom_edit_url: "https://github.com/netdata/go.d.plugin/edit/master/modules/couchdb/README.md"
-sidebar_label: "CouchDB"
-learn_status: "Published"
-toc_max_heading_level: "4"
-learn_rel_path: "Data collection/Database servers"
-description: "Monitor the health and performance of CouchDB databases with zero configuration, per-second metric granularity, and interactive visualizations."
-sidebar_position: "646120"
-slug: "/data-collection/database-servers/couchdb"
----
+------|:----------|:----|
+| couchdb.activity | db_reads, db_writes, view_reads | requests/s |
+| couchdb.request_methods | copy, delete, get, head, options, post, put | requests/s |
+| couchdb.response_codes | 200, 201, 202, 204, 206, 301, 302, 304, 400, 401, 403, 404, 406, 409, 412, 413, 414, 415, 416, 417, 500, 501, 503 | responses/s |
+| couchdb.response_code_classes | 2xx, 3xx, 4xx, 5xx | responses/s |
+| couchdb.active_tasks | indexer, db_compaction, replication, view_compaction | tasks |
+| couchdb.replicator_jobs | running, pending, crashed, internal_replication_jobs | jobs |
+| couchdb.open_files | files | files |
+| couchdb.erlang_vm_memory | atom, binaries, code, ets, procs, other | B |
+| couchdb.proccounts | os_procs, erl_procs | processes |
+| couchdb.peakmsgqueue | peak_size | messages |
+| couchdb.reductions | reductions | reductions |
+| couchdb.db_sizes_file | a dimension per database | KiB |
+| couchdb.db_sizes_external | a dimension per database | KiB |
+| couchdb.db_sizes_active | a dimension per database | KiB |
+| couchdb.db_doc_count | a dimension per database | docs |
+| couchdb.db_doc_del_count | a dimension per database | docs |
 
 
-# Apache CouchDB collector
 
-Monitors vital statistics of a local Apache CouchDB 2.x server.
+## Alerts
 
-This module monitors one or more `CouchDB` instances, depending on your configuration.
+There are no alerts configured by default for this integration.
 
-## Metrics
 
-All metrics have "couchdb." prefix.
+## Setup
 
-| Metric                | Scope  |                                                    Dimensions                                                     |    Units    |
-|-----------------------|:------:|:-----------------------------------------------------------------------------------------------------------------:|:-----------:|
-| activity              | global |                                          db_reads, db_writes, view_reads                                          | requests/s  |
-| request_methods       | global |                                    copy, delete, get, head, options, post, put                                    | requests/s  |
-| response_codes        | global | 200, 201, 202, 204, 206, 301, 302, 304, 400, 401, 403, 404, 406, 409, 412, 413, 414, 415, 416, 417, 500, 501, 503 | responses/s |
-| response_code_classes | global |                                                2xx, 3xx, 4xx, 5xx                                                 | responses/s |
-| active_tasks          | global |                               indexer, db_compaction, replication, view_compaction                                |    tasks    |
-| replicator_jobs       | global |                               running, pending, crashed, internal_replication_jobs                                |    jobs     |
-| open_files            | global |                                                       files                                                       |    files    |
-| erlang_vm_memory      | global |                                      atom, binaries, code, ets, procs, other                                      |      B      |
-| proccounts            | global |                                                os_procs, erl_procs                                                |  processes  |
-| peakmsgqueue          | global |                                                     peak_size                                                     |  messages   |
-| reductions            | global |                                                    reductions                                                     | reductions  |
-| db_sizes_file         | global |                                          <i>a dimension per database</i>                                          |     KiB     |
-| db_sizes_external     | global |                                          <i>a dimension per database</i>                                          |     KiB     |
-| db_sizes_active       | global |                                          <i>a dimension per database</i>                                          |     KiB     |
-| db_doc_count          | global |                                          <i>a dimension per database</i>                                          |    docs     |
-| db_doc_del_count      | global |                                          <i>a dimension per database</i>                                          |    docs     |
+### Prerequisites
 
-## Configuration
+No action required.
 
-Edit the `go.d/couchdb.conf` configuration file using `edit-config` from the
-Netdata [config directory](/docs/configuring/configuration), which is typically at `/etc/netdata`.
+### Configuration
+
+#### File
+
+The configuration file name for this integration is `go.d/couchdb.conf`.
+
+
+You can edit the configuration file using the `edit-config` script from the
+Netdata [config directory](/docs/configuring/configuration#the-netdata-config-directory).
 
 ```bash
-cd /etc/netdata   # Replace this path with your Netdata config directory, if different
+cd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata
 sudo ./edit-config go.d/couchdb.conf
 ```
+#### Options
 
-Sample for a local server running on port 5984:
+The following options can be defined globally: update_every, autodetection_retry.
+
+
+<details><summary>Config</summary>
+
+| Name | Description | Default | Required |
+|:----|:-----------|:-------|:--------:|
+| update_every | Data collection frequency. | 1 | False |
+| autodetection_retry | Recheck interval in seconds. Zero means no recheck will be scheduled. | 0 | False |
+| url | Server URL. | http://127.0.0.1:5984 | True |
+| node | CouchDB node name. Same as -name vm.args argument. | _local | False |
+| databases | List of database names for which db-specific stats should be displayed, space separated. |  | False |
+| username | Username for basic HTTP authentication. |  | False |
+| password | Password for basic HTTP authentication. |  | False |
+| proxy_url | Proxy URL. |  | False |
+| proxy_username | Username for proxy basic HTTP authentication. |  | False |
+| proxy_password | Password for proxy basic HTTP authentication. |  | False |
+| timeout | HTTP request timeout. | 2 | False |
+| method | HTTP request method. | GET | False |
+| body | HTTP request body. |  | False |
+| headers | HTTP request headers. |  | False |
+| not_follow_redirects | Redirect handling policy. Controls whether the client follows redirects. | False | False |
+| tls_skip_verify | Server certificate chain and hostname validation policy. Controls whether the client performs this check. | False | False |
+| tls_ca | Certification authority that the client uses when verifying the server's certificates. |  | False |
+| tls_cert | Client tls certificate. |  | False |
+| tls_key | Client tls key. |  | False |
+
+</details>
+
+#### Examples
+
+##### Basic
+
+An example configuration.
+
+<details><summary>Config</summary>
 
 ```yaml
-local:
-  user: 'admin'
-  pass: 'password'
-  node: 'couchdb@127.0.0.1'
+jobs:
+  - name: local
+    url: http://127.0.0.1:5984
+
 ```
+</details>
 
-Be sure to specify a correct admin-level username and password.
+##### Basic HTTP auth
 
-You may also need to change the `node` name; this should match the value of `-name NODENAME` in your
-CouchDB's `etc/vm.args` file. Typically, this is of the form `couchdb@fully.qualified.domain.name` in a cluster,
-or `couchdb@127.0.0.1` / `couchdb@localhost` for a single-node server.
+Local server with basic HTTP authentication, node name and multiple databases defined. Make sure to match the node name with the `NODENAME` value in your CouchDB's `etc/vm.args` file.  Typically, this is of the form `couchdb@fully.qualified.domain.name` in a cluster, or `couchdb@127.0.0.1` for a single-node server.
 
-If you want per-database statistics, these need to be added to the configuration, separated by spaces:
+
+<details><summary>Config</summary>
 
 ```yaml
-local:
-  databases: 'db1 db2 db3 ...'
-```
+jobs:
+  - name: local
+    url: http://127.0.0.1:5984
+    node: couchdb@127.0.0.1
+    databases: my-db other-db
+    username: foo
+    password: bar
 
-For all available options, see the CouchDB
-collector's [configuration file](https://github.com/netdata/go.d.plugin/blob/master/config/go.d/couchdb.conf).
+```
+</details>
+
+##### Multi-instance
+
+> **Note**: When you define multiple jobs, their names must be unique.
+
+Collecting metrics from local and remote instances.
+
+
+<details><summary>Config</summary>
+
+```yaml
+jobs:
+  - name: local
+    url: http://127.0.0.1:5984
+
+  - name: remote
+    url: http://203.0.113.0:5984
+
+```
+</details>
+
+
 
 ## Troubleshooting
+
+### Debug Mode
 
 To troubleshoot issues with the `couchdb` collector, run the `go.d.plugin` with the debug option enabled. The output
 should give you clues as to why the collector isn't working.
@@ -97,3 +156,5 @@ should give you clues as to why the collector isn't working.
   ```bash
   ./go.d.plugin -d -m couchdb
   ```
+
+

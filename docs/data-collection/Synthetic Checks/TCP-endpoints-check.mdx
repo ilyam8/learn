@@ -1,43 +1,28 @@
----
-custom_edit_url: "https://github.com/netdata/go.d.plugin/edit/master/modules/portcheck/README.md"
-sidebar_label: "TCP endpoints check"
-learn_status: "Published"
-toc_max_heading_level: "4"
-learn_rel_path: "Data collection/Synthetic Checks"
-description: "Monitor the health and performance of any TCP endpoint with zero configuration, per-second metric granularity, and interactive visualizations."
-sidebar_position: "644120"
-slug: "/data-collection/synthetic-checks/tcp-endpoints-check"
----
-# TCP endpoint collector
-
-## Overview
-
-This collector monitors one or more TCP services availability and response time.
-
-## Collected metrics
-
-Metrics grouped by *scope*.
-
-The scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.
-
-### tcp endpoint
-
-These metrics refer to the TCP endpoint.
-
-Labels:
-
-| Label | Description |
-|-------|-------------|
-| host  | host        |
-| port  | port        |
+-----------|:----------------|
+| host | host |
+| port | port |
 
 Metrics:
 
-| Metric                   |        Dimensions        |  Unit   |
-|--------------------------|:------------------------:|:-------:|
-| portcheck.status         | success, failed, timeout | boolean |
-| portcheck.state_duration |           time           | seconds |
-| portcheck.latency        |           time           |   ms    |
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| portcheck.status | success, failed, timeout | boolean |
+| portcheck.state_duration | time | seconds |
+| portcheck.latency | time | ms |
+
+
+
+## Alerts
+
+
+The following alerts are available:
+
+| Alert name  | On metric | Description |
+|:------------|:----------|:------------|
+| [ portcheck_service_reachable ](https://github.com/netdata/netdata/blob/master/health/health.d/portcheck.conf) | portcheck.status | TCP host ${label:host} port ${label:port} liveness status |
+| [ portcheck_connection_timeouts ](https://github.com/netdata/netdata/blob/master/health/health.d/portcheck.conf) | portcheck.status | percentage of timed-out TCP connections to host ${label:host} port ${label:port} in the last 5 minutes |
+| [ portcheck_connection_fails ](https://github.com/netdata/netdata/blob/master/health/health.d/portcheck.conf) | portcheck.status | percentage of failed TCP connections to host ${label:host} port ${label:port} in the last 5 minutes |
+
 
 ## Setup
 
@@ -49,17 +34,8 @@ No action required.
 
 #### File
 
-The configuration file name is `go.d/portcheck.conf`.
+The configuration file name for this integration is `go.d/portcheck.conf`.
 
-The file format is YAML. Generally, the format is:
-
-```yaml
-update_every: 1
-autodetection_retry: 0
-jobs:
-  - name: some_name1
-  - name: some_name1
-```
 
 You can edit the configuration file using the `edit-config` script from the
 Netdata [config directory](/docs/configuring/configuration#the-netdata-config-directory).
@@ -68,21 +44,20 @@ Netdata [config directory](/docs/configuring/configuration#the-netdata-config-di
 cd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata
 sudo ./edit-config go.d/portcheck.conf
 ```
-
 #### Options
 
 The following options can be defined globally: update_every, autodetection_retry.
 
-<details>
-<summary>Config options</summary>
 
-|        Name         | Description                                                        | Default | Required |
-|:-------------------:|--------------------------------------------------------------------|:-------:|:--------:|
-|    update_every     | Data collection frequency.                                         |    5    |          |
-| autodetection_retry | Re-check interval in seconds. Zero means not to schedule re-check. |    0    |          |
-|        host         | Remote host address in IPv4, IPv6 format, or DNS name.             |         |   yes    |
-|        ports        | Remote host ports. Must be specified in numeric format.            |         |   yes    |
-|       timeout       | HTTP request timeout.                                              |    2    |          |
+<details><summary>Config options</summary>
+
+| Name | Description | Default | Required |
+|:----|:-----------|:-------|:--------:|
+| update_every | Data collection frequency. | 5 | False |
+| autodetection_retry | Recheck interval in seconds. Zero means no recheck will be scheduled. | 0 | False |
+| host | Remote host address in IPv4, IPv6 format, or DNS name. |  | True |
+| ports | Remote host ports. Must be specified in numeric format. |  | True |
+| timeout | HTTP request timeout. | 2 | False |
 
 </details>
 
@@ -91,8 +66,8 @@ The following options can be defined globally: update_every, autodetection_retry
 ##### Check SSH and telnet
 
 An example configuration.
-<details>
-<summary>Config</summary>
+
+<details><summary>Config</summary>
 
 ```yaml
 jobs:
@@ -101,15 +76,15 @@ jobs:
     ports:
       - 22
       - 23
-```
 
+```
 </details>
 
 ##### Check webserver with IPv6 address
 
 An example configuration.
-<details>
-<summary>Config</summary>
+
+<details><summary>Config</summary>
 
 ```yaml
 jobs:
@@ -118,8 +93,8 @@ jobs:
     ports:
       - 80
       - 8080
-```
 
+```
 </details>
 
 ##### Multi-instance
@@ -128,8 +103,8 @@ jobs:
 
 Multiple instances.
 
-<details>
-<summary>Config</summary>
+
+<details><summary>Config</summary>
 
 ```yaml
 jobs:
@@ -144,13 +119,15 @@ jobs:
     ports:
       - 22
       - 23
-```
 
+```
 </details>
+
+
 
 ## Troubleshooting
 
-### Debug mode
+### Debug Mode
 
 To troubleshoot issues with the `portcheck` collector, run the `go.d.plugin` with the debug option enabled. The output
 should give you clues as to why the collector isn't working.
@@ -173,3 +150,5 @@ should give you clues as to why the collector isn't working.
   ```bash
   ./go.d.plugin -d -m portcheck
   ```
+
+

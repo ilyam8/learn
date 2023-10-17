@@ -1,67 +1,31 @@
----
-custom_edit_url: "https://github.com/netdata/go.d.plugin/edit/master/modules/vcsa/README.md"
-sidebar_label: "VMWare Center Server Appliance"
-learn_status: "Published"
-toc_max_heading_level: "4"
-learn_rel_path: "Data collection/Containers and VMs"
-description: "Monitor the health and performance of vCenter appliances with zero configuration, per-second metric granularity, and interactive visualizations."
-sidebar_position: "634120"
-slug: "/data-collection/containers-and-vms/vmware-center-server-appliance"
----
-# vCenter Server Appliance collector
-
-## Overview
-
-The [vCenter Server Appliance](https://docs.vmware.com/en/VMware-vSphere/6.5/com.vmware.vsphere.vcsa.doc/GUID-223C2821-BD98-4C7A-936B-7DBE96291BA4.html)
-is a preconfigured Linux virtual machine, which is optimized for running VMware vCenter Server® and the associated
-services on Linux.
-
-This collector
-monitors [health statistics](https://developer.vmware.com/apis/vsphere-automation/latest/appliance/health/) from one or
-more vCenter Server Appliance servers, depending on your configuration.
-
-## Collected metrics
-
-Metrics grouped by *scope*.
-
-The scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.
-
-### global
-
-These metrics refer to the entire monitored application.
-<details>
-<summary>See health statuses</summary>
-Overall System Health:
-
-| Numeric |   Text    | Description                                                                                                              |
-|:-------:|:---------:|:-------------------------------------------------------------------------------------------------------------------------|
-|  `-1`   | `unknown` | Module failed to decode status.                                                                                          |
-|   `0`   |  `green`  | All components in the appliance are healthy.                                                                             |
-|   `1`   | `yellow`  | One or more components in the appliance might become overloaded soon.                                                    |
-|   `2`   | `orange`  | One or more components in the appliance might be degraded.                                                               |
-|   `3`   |   `red`   | One or more components in the appliance might be in an unusable status and the appliance might become unresponsive soon. |
-|   `4`   |  `gray`   | No health data is available.                                                                                             |
+-------:|:-------------------------------------------------------------------------------------------------------------------------|
+|  green  | All components in the appliance are healthy.                                                                             |
+| yellow  | One or more components in the appliance might become overloaded soon.                                                    |
+| orange  | One or more components in the appliance might be degraded.                                                               |
+|   red   | One or more components in the appliance might be in an unusable status and the appliance might become unresponsive soon. |
+|  gray   | No health data is available.                                                                                             |
+| unknown | Collector failed to decode status.                                                                                       |
 
 Components Health:
 
-| Numeric |   Text    | Description                                                  |
-|:-------:|:---------:|:-------------------------------------------------------------|
-|  `-1`   | `unknown` | Module failed to decode status.                              |
-|   `0`   |  `green`  | The component is healthy.                                    |
-|   `1`   | `yellow`  | The component is healthy, but may have some problems.        |
-|   `2`   | `orange`  | The component is degraded, and may have serious problems.    |
-|   `3`   |   `red`   | The component is unavailable, or will stop functioning soon. |
-|   `4`   |  `gray`   | No health data is available.                                 |
+| Status  | Description                                                  |
+|:-------:|:-------------------------------------------------------------|
+|  green  | The component is healthy.                                    |
+| yellow  | The component is healthy, but may have some problems.        |
+| orange  | The component is degraded, and may have serious problems.    |
+|   red   | The component is unavailable, or will stop functioning soon. |
+|  gray   | No health data is available.                                 |
+| unknown | Collector failed to decode status.                           |
 
 Software Updates Health:
 
-| Numeric |   Text    | Description                                          |
-|:-------:|:---------:|:-----------------------------------------------------|
-|  `-1`   | `unknown` | Module failed to decode status.                      |
-|   `0`   |  `green`  | No updates available.                                |
-|   `2`   | `orange`  | Non-security patches might be available.             |
-|   `3`   |   `red`   | Security patches might be available.                 |
-|   `4`   |  `gray`   | An error retrieving information on software updates. |
+| Status  | Description                                          |
+|:-------:|:-----------------------------------------------------|
+|  green  | No updates available.                                |
+| orange  | Non-security patches might be available.             |
+|   red   | Security patches might be available.                 |
+|  gray   | An error retrieving information on software updates. |
+| unknown | Collector failed to decode status.                   |
 
 </details>
 
@@ -70,11 +34,42 @@ This scope has no labels.
 
 Metrics:
 
-| Metric                       |                   Dimensions                   |  Unit  |
-|------------------------------|:----------------------------------------------:|:------:|
-| vcsa.system_health           |                     system                     | status |
-| vcsa.components_health       | applmgmt, database_storage, mem, storage, swap | status |
-| vcsa.software_updates_health |               software_packages                | status |
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| vcsa.system_health_status | green, red, yellow, orange, gray, unknown | status |
+| vcsa.applmgmt_health_status | green, red, yellow, orange, gray, unknown | status |
+| vcsa.load_health_status | green, red, yellow, orange, gray, unknown | status |
+| vcsa.mem_health_status | green, red, yellow, orange, gray, unknown | status |
+| vcsa.swap_health_status | green, red, yellow, orange, gray, unknown | status |
+| vcsa.database_storage_health_status | green, red, yellow, orange, gray, unknown | status |
+| vcsa.storage_health_status | green, red, yellow, orange, gray, unknown | status |
+| vcsa.software_packages_health_status | green, red, orange, gray, unknown | status |
+
+
+
+## Alerts
+
+
+The following alerts are available:
+
+| Alert name  | On metric | Description |
+|:------------|:----------|:------------|
+| [ vcsa_system_health_warn ](https://github.com/netdata/netdata/blob/master/health/health.d/vcsa.conf) | vcsa.system_health_status | VCSA overall system status is orange. One or more components are degraded. |
+| [ vcsa_system_health_crit ](https://github.com/netdata/netdata/blob/master/health/health.d/vcsa.conf) | vcsa.system_health_status | VCSA overall system status is red. One or more components are unavailable or will stop functioning soon. |
+| [ vcsa_applmgmt_health_warn ](https://github.com/netdata/netdata/blob/master/health/health.d/vcsa.conf) | vcsa.applmgmt_health_status | VCSA ApplMgmt component status is orange. It is degraded, and may have serious problems. |
+| [ vcsa_applmgmt_health_crit ](https://github.com/netdata/netdata/blob/master/health/health.d/vcsa.conf) | vcsa.applmgmt_health_status | VCSA ApplMgmt component status is red. It is unavailable, or will stop functioning soon. |
+| [ vcsa_load_health_warn ](https://github.com/netdata/netdata/blob/master/health/health.d/vcsa.conf) | vcsa.load_health_status | VCSA Load component status is orange. It is degraded, and may have serious problems. |
+| [ vcsa_load_health_crit ](https://github.com/netdata/netdata/blob/master/health/health.d/vcsa.conf) | vcsa.load_health_status | VCSA Load component status is red. It is unavailable, or will stop functioning soon. |
+| [ vcsa_mem_health_warn ](https://github.com/netdata/netdata/blob/master/health/health.d/vcsa.conf) | vcsa.mem_health_status | VCSA Memory component status is orange. It is degraded, and may have serious problems. |
+| [ vcsa_mem_health_crit ](https://github.com/netdata/netdata/blob/master/health/health.d/vcsa.conf) | vcsa.mem_health_status | VCSA Memory component status is red. It is unavailable, or will stop functioning soon. |
+| [ vcsa_swap_health_warn ](https://github.com/netdata/netdata/blob/master/health/health.d/vcsa.conf) | vcsa.swap_health_status | VCSA Swap component status is orange. It is degraded, and may have serious problems. |
+| [ vcsa_swap_health_crit ](https://github.com/netdata/netdata/blob/master/health/health.d/vcsa.conf) | vcsa.swap_health_status | VCSA Swap component status is red. It is unavailable, or will stop functioning soon. |
+| [ vcsa_database_storage_health_warn ](https://github.com/netdata/netdata/blob/master/health/health.d/vcsa.conf) | vcsa.database_storage_health_status | VCSA Database Storage component status is orange. It is degraded, and may have serious problems. |
+| [ vcsa_database_storage_health_crit ](https://github.com/netdata/netdata/blob/master/health/health.d/vcsa.conf) | vcsa.database_storage_health_status | VCSA Database Storage component status is red. It is unavailable, or will stop functioning soon. |
+| [ vcsa_storage_health_warn ](https://github.com/netdata/netdata/blob/master/health/health.d/vcsa.conf) | vcsa.storage_health_status | VCSA Storage component status is orange. It is degraded, and may have serious problems. |
+| [ vcsa_storage_health_crit ](https://github.com/netdata/netdata/blob/master/health/health.d/vcsa.conf) | vcsa.storage_health_status | VCSA Storage component status is red. It is unavailable, or will stop functioning soon. |
+| [ vcsa_software_packages_health_warn ](https://github.com/netdata/netdata/blob/master/health/health.d/vcsa.conf) | vcsa.software_packages_health_status | VCSA software packages security updates are available. |
+
 
 ## Setup
 
@@ -86,17 +81,8 @@ No action required.
 
 #### File
 
-The configuration file name is `go.d/vcsa.conf`.
+The configuration file name for this integration is `go.d/vcsa.conf`.
 
-The file format is YAML. Generally, the format is:
-
-```yaml
-update_every: 1
-autodetection_retry: 0
-jobs:
-  - name: some_name1
-  - name: some_name1
-```
 
 You can edit the configuration file using the `edit-config` script from the
 Netdata [config directory](/docs/configuring/configuration#the-netdata-config-directory).
@@ -105,33 +91,32 @@ Netdata [config directory](/docs/configuring/configuration#the-netdata-config-di
 cd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata
 sudo ./edit-config go.d/vcsa.conf
 ```
-
 #### Options
 
 The following options can be defined globally: update_every, autodetection_retry.
 
-<details>
-<summary>Config options</summary>
 
-|         Name         | Description                                                                                               | Default | Required |
-|:--------------------:|-----------------------------------------------------------------------------------------------------------|:-------:|:--------:|
-|     update_every     | Data collection frequency.                                                                                |    5    |          |
-| autodetection_retry  | Re-check interval in seconds. Zero means not to schedule re-check.                                        |    0    |          |
-|         url          | Server URL.                                                                                               |         |   yes    |
-|       timeout        | HTTP request timeout.                                                                                     |    1    |          |
-|       username       | Username for basic HTTP authentication.                                                                   |         |   yes    |
-|       password       | Password for basic HTTP authentication.                                                                   |         |   yes    |
-|      proxy_url       | Proxy URL.                                                                                                |         |          |
-|    proxy_username    | Username for proxy basic HTTP authentication.                                                             |         |          |
-|    proxy_password    | Password for proxy basic HTTP authentication.                                                             |         |          |
-|        method        | HTTP request method.                                                                                      |   GET   |          |
-|         body         | HTTP request body.                                                                                        |         |          |
-|       headers        | HTTP request headers.                                                                                     |         |          |
-| not_follow_redirects | Redirect handling policy. Controls whether the client follows redirects.                                  |   no    |          |
-|   tls_skip_verify    | Server certificate chain and hostname validation policy. Controls whether the client performs this check. |   no    |          |
-|        tls_ca        | Certification authority that the client uses when verifying the server's certificates.                    |         |          |
-|       tls_cert       | Client TLS certificate.                                                                                   |         |          |
-|       tls_key        | Client TLS key.                                                                                           |         |          |
+<details><summary>Config options</summary>
+
+| Name | Description | Default | Required |
+|:----|:-----------|:-------|:--------:|
+| update_every | Data collection frequency. | 5 | False |
+| autodetection_retry | Recheck interval in seconds. Zero means no recheck will be scheduled. | 0 | False |
+| url | Server URL. |  | True |
+| timeout | HTTP request timeout. | 1 | False |
+| username | Username for basic HTTP authentication. |  | True |
+| password | Password for basic HTTP authentication. |  | True |
+| proxy_url | Proxy URL. |  | False |
+| proxy_username | Username for proxy basic HTTP authentication. |  | False |
+| proxy_password | Password for proxy basic HTTP authentication. |  | False |
+| method | HTTP request method. | GET | False |
+| body | HTTP request body. |  | False |
+| headers | HTTP request headers. |  | False |
+| not_follow_redirects | Redirect handling policy. Controls whether the client follows redirects. | false | False |
+| tls_skip_verify | Server certificate chain and hostname validation policy. Controls whether the client performs this check. | false | False |
+| tls_ca | Certification authority that the client uses when verifying the server's certificates. |  | False |
+| tls_cert | Client TLS certificate. |  | False |
+| tls_key | Client TLS key. |  | False |
 
 </details>
 
@@ -140,8 +125,8 @@ The following options can be defined globally: update_every, autodetection_retry
 ##### Basic
 
 An example configuration.
-<details>
-<summary>Config</summary>
+
+<details><summary>Config</summary>
 
 ```yaml
 jobs:
@@ -149,8 +134,8 @@ jobs:
     url: https://203.0.113.1
     username: admin@vsphere.local
     password: password
-```
 
+```
 </details>
 
 ##### Multi-instance
@@ -159,8 +144,8 @@ jobs:
 
 Two instances.
 
-<details>
-<summary>Config</summary>
+
+<details><summary>Config</summary>
 
 ```yaml
 jobs:
@@ -173,13 +158,15 @@ jobs:
     url: https://203.0.113.10
     username: admin@vsphere.local
     password: password
-```
 
+```
 </details>
+
+
 
 ## Troubleshooting
 
-### Debug mode
+### Debug Mode
 
 To troubleshoot issues with the `vcsa` collector, run the `go.d.plugin` with the debug option enabled. The output
 should give you clues as to why the collector isn't working.
@@ -202,4 +189,5 @@ should give you clues as to why the collector isn't working.
   ```bash
   ./go.d.plugin -d -m vcsa
   ```
+
 

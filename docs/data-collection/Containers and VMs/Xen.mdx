@@ -1,59 +1,111 @@
----
-custom_edit_url: "https://github.com/netdata/netdata/edit/master/collectors/xenstat.plugin/README.md"
-sidebar_label: "Xen"
-learn_status: "Published"
-toc_max_heading_level: "4"
-learn_rel_path: "Data collection/Containers and VMs"
-sidebar_position: "634200"
-slug: "/data-collection/containers-and-vms/xen"
----
+------|:----------|:----|
+| xenstat.mem | free, used | MiB |
+| xenstat.domains | domains | domains |
+| xenstat.cpus | cpus | cpus |
+| xenstat.cpu_freq | frequency | MHz |
+
+### Per xendomain
+
+Metrics related to Xen domains. Each domain provides its own set of the following metrics.
+
+This scope has no labels.
+
+Metrics:
+
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| xendomain.states | running, blocked, paused, shutdown, crashed, dying | boolean |
+| xendomain.cpu | used | percentage |
+| xendomain.mem | maximum, current | MiB |
+| xendomain.vcpu | a dimension per vcpu | percentage |
+
+### Per xendomain vbd
+
+Metrics related to Xen domain Virtual Block Device. Each VBD provides its own set of the following metrics.
+
+This scope has no labels.
+
+Metrics:
+
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| xendomain.oo_req_vbd | requests | requests/s |
+| xendomain.requests_vbd | read, write | requests/s |
+| xendomain.sectors_vbd | read, write | sectors/s |
+
+### Per xendomain network
+
+Metrics related to Xen domain network interfaces. Each network interface provides its own set of the following metrics.
+
+This scope has no labels.
+
+Metrics:
+
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| xendomain.bytes_network | received, sent | kilobits/s |
+| xendomain.packets_network | received, sent | packets/s |
+| xendomain.errors_network | received, sent | errors/s |
+| xendomain.drops_network | received, sent | drops/s |
 
 
-# xenstat.plugin
 
-`xenstat.plugin` collects XenServer and XCP-ng statistics.
+## Alerts
 
-## Prerequisites
+There are no alerts configured by default for this integration.
 
-1.  install `xen-dom0-libs-devel` and `yajl-devel` using the package manager of your system.
-    Note: On Cent-OS systems you will need `centos-release-xen` repository and the required package for xen is `xen-devel`
 
-2.  re-install Netdata from source. The installer will detect that the required libraries are now available and will also build xenstat.plugin.
+## Setup
 
-Keep in mind that `libxenstat` requires root access, so the plugin is setuid to root.
+### Prerequisites
 
-## Charts
+#### Libraries
 
-The plugin provides XenServer and XCP-ng host and domains statistics:
+1. Install `xen-dom0-libs-devel` and `yajl-devel` using the package manager of your system.
 
-Host:
+  Note: On Cent-OS systems you will need `centos-release-xen` repository and the required package for xen is `xen-devel`
 
-1.  Number of domains.
+2. Re-install Netdata from source. The installer will detect that the required libraries are now available and will also build xenstat.plugin.
 
-Domain:
 
-1.  CPU.
-2.  Memory.
-3.  Networks.
-4.  VBDs.
 
-## Configuration
+### Configuration
 
-If you need to disable xenstat for Netdata, edit /etc/netdata/netdata.conf and set:
+#### File
 
+The configuration file name for this integration is `netdata.conf`.
+Configuration for this specific integration is located in the `[plugin:xenstat]` section within that file.
+
+The file format is a modified INI syntax. The general structure is:
+
+```ini
+[section1]
+    option1 = some value
+    option2 = some other value
+
+[section2]
+    option3 = some third value
 ```
-[plugins]
-    xenstat = no
+You can edit the configuration file using the `edit-config` script from the
+Netdata [config directory](/docs/configuring/configuration#the-netdata-config-directory).
+
+```bash
+cd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata
+sudo ./edit-config netdata.conf
 ```
+#### Options
 
-## Debugging
 
-You can run the plugin by hand:
 
-```
-sudo /usr/libexec/netdata/plugins.d/xenstat.plugin 1 debug
-```
+<details><summary>Config options</summary>
 
-You will get verbose output on what the plugin does.
+| Name | Description | Default | Required |
+|:----|:-----------|:-------|:--------:|
+| update every | Data collection frequency. | 1 | False |
+
+</details>
+
+#### Examples
+There are no configuration examples.
 
 

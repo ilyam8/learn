@@ -1,92 +1,137 @@
----
-custom_edit_url: "https://github.com/netdata/netdata/edit/master/collectors/python.d.plugin/alarms/README.md"
-sidebar_label: "Alarms"
-learn_status: "Published"
-toc_max_heading_level: "4"
-learn_rel_path: "Data collection/Netdata Specific"
-sidebar_position: "682080"
-slug: "/data-collection/netdata-specific/alarms"
----
+------|:----------|:----|
+| alarms.status | a dimension per alarm representing the latest status of the alarm. | status |
+| alarms.values | a dimension per alarm representing the latest collected value of the alarm. | value |
 
 
-# Alarms
 
-This collector creates an 'Alarms' menu with one line plot showing alarm states over time. Alarm states are mapped to integer values according to the below default mapping. Any alarm status types not in this mapping will be ignored (Note: This mapping can be changed by editing the `status_map` in the `alarms.conf` file). If you would like to learn more about the different alarm statuses check out the docs [here](/docs/alerting/health-configuration-reference#alarm-statuses).
+## Alerts
 
-```
-{
-    'CLEAR': 0, 
-    'WARNING': 1, 
-    'CRITICAL': 2
-}
-```
+There are no alerts configured by default for this integration.
 
-## Charts
 
-Below is an example of the chart produced when running `stress-ng --all 2` for a few minutes. You can see the various warning and critical alarms raised. 
+## Setup
 
-![alarms collector](https://user-images.githubusercontent.com/1153921/101641493-0b086a80-39ef-11eb-9f55-0713e5dfb19f.png)
+### Prerequisites
 
-## Configuration
+No action required.
 
-Enable the collector and [restart Netdata](/docs/maintaining/starting-and-stopping-netdata-agents).
+### Configuration
+
+#### File
+
+The configuration file name for this integration is `python.d/alarms.conf`.
+
+
+You can edit the configuration file using the `edit-config` script from the
+Netdata [config directory](/docs/configuring/configuration#the-netdata-config-directory).
 
 ```bash
-cd /etc/netdata/
-sudo ./edit-config python.d.conf
-# Set `alarms: no` to `alarms: yes`
-sudo systemctl restart netdata
-```
-
-If needed, edit the `python.d/alarms.conf` configuration file using `edit-config` from the your agent's [config
-directory](/docs/configuring/configuration), which is usually at `/etc/netdata`.
-
-```bash
-cd /etc/netdata   # Replace this path with your Netdata config directory, if different
+cd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata
 sudo ./edit-config python.d/alarms.conf
 ```
+#### Options
 
-The `alarms` specific part of the `alarms.conf` file should look like this:
+There are 2 sections:
+
+* Global variables
+* One or more JOBS that can define multiple different instances to monitor.
+
+The following options can be defined globally: priority, penalty, autodetection_retry, update_every, but can also be defined per JOB to override the global values.
+
+Additionally, the following collapsed table contains all the options that can be configured inside a JOB definition.
+
+Every configuration JOB starts with a `job_name` value which will appear in the dashboard, unless a `name` parameter is specified.
+
+
+<details><summary>Config options</summary>
+
+| Name | Description | Default | Required |
+|:----|:-----------|:-------|:--------:|
+| url | Netdata agent alarms endpoint to collect from. Can be local or remote so long as reachable by agent. | http://127.0.0.1:19999/api/v1/alarms?all | True |
+| status_map | Mapping of alarm status to integer number that will be the metric value collected. | {"CLEAR": 0, "WARNING": 1, "CRITICAL": 2} | True |
+| collect_alarm_values | set to true to include a chart with calculated alarm values over time. | False | True |
+| alarm_status_chart_type | define the type of chart for plotting status over time e.g. 'line' or 'stacked'. | line | True |
+| alarm_contains_words | A "," separated list of words you want to filter alarm names for. For example 'cpu,load' would filter for only alarms with "cpu" or "load" in alarm name. Default includes all. |  | True |
+| alarm_excludes_words | A "," separated list of words you want to exclude based on alarm name. For example 'cpu,load' would exclude all alarms with "cpu" or "load" in alarm name. Default excludes None. |  | True |
+| update_every | Sets the default data collection frequency. | 10 | False |
+| priority | Controls the order of charts at the netdata dashboard. | 60000 | False |
+| autodetection_retry | Sets the job re-check interval in seconds. | 0 | False |
+| penalty | Indicates whether to apply penalty to update_every in case of failures. | yes | False |
+| name | Job name. This value will overwrite the `job_name` value. JOBS with the same name are mutually exclusive. Only one of them will be allowed running at any time. This allows autodetection to try several alternatives and pick the one that works. |  | False |
+
+</details>
+
+#### Examples
+
+##### Basic
+
+A basic example configuration.
 
 ```yaml
-# what url to pull data from
-local:
+jobs:
   url: 'http://127.0.0.1:19999/api/v1/alarms?all'
-  # define how to map alarm status to numbers for the chart
+
+```
+##### Advanced
+
+An advanced example configuration with multiple jobs collecting different subsets of alarms for plotting on different charts.
+"ML" job will collect status and values for all alarms with "ml_" in the name. Default job will collect status for all other alarms.
+
+
+<details><summary>Config</summary>
+
+```yaml
+ML:
+  update_every: 5
+  url: 'http://127.0.0.1:19999/api/v1/alarms?all'
   status_map:
     CLEAR: 0
     WARNING: 1
     CRITICAL: 2
-  # set to true to include a chart with calculated alarm values over time
+  collect_alarm_values: true
+  alarm_status_chart_type: 'stacked'
+  alarm_contains_words: 'ml_'
+
+Default:
+  update_every: 5
+  url: 'http://127.0.0.1:19999/api/v1/alarms?all'
+  status_map:
+    CLEAR: 0
+    WARNING: 1
+    CRITICAL: 2
   collect_alarm_values: false
-  # define the type of chart for plotting status over time e.g. 'line' or 'stacked'
-  alarm_status_chart_type: 'line'
-  # a "," separated list of words you want to filter alarm names for. For example 'cpu,load' would filter for only
-  # alarms with "cpu" or "load" in alarm name. Default includes all.
-  alarm_contains_words: ''
-  # a "," separated list of words you want to exclude based on alarm name. For example 'cpu,load' would exclude 
-  # all alarms with "cpu" or "load" in alarm name. Default excludes None.
-  alarm_excludes_words: ''
+  alarm_status_chart_type: 'stacked'
+  alarm_excludes_words: 'ml_'
+
 ```
+</details>
 
-It will default to pulling all alarms at each time step from the Netdata rest api at `http://127.0.0.1:19999/api/v1/alarms?all`
-### Troubleshooting
 
-To troubleshoot issues with the `alarms` module, run the `python.d.plugin` with the debug option enabled. The 
-output will give you the output of the data collection job or error messages on why the collector isn't working.
 
-First, navigate to your plugins directory, usually they are located under `/usr/libexec/netdata/plugins.d/`. If that's 
-not the case on your system, open `netdata.conf` and look for the setting `plugins directory`. Once you're in the 
-plugin's directory, switch to the `netdata` user.
+## Troubleshooting
 
-```bash
-cd /usr/libexec/netdata/plugins.d/
-sudo su -s /bin/bash netdata
-```
+### Debug Mode
 
-Now you can manually run the `alarms` module in debug mode:
+To troubleshoot issues with the `alarms` collector, run the `python.d.plugin` with the debug option enabled. The output
+should give you clues as to why the collector isn't working.
 
-```bash
-./python.d.plugin alarms debug trace
-```
+- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on
+  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.
+
+  ```bash
+  cd /usr/libexec/netdata/plugins.d/
+  ```
+
+- Switch to the `netdata` user.
+
+  ```bash
+  sudo -u netdata -s
+  ```
+
+- Run the `python.d.plugin` to debug the collector:
+
+  ```bash
+  ./python.d.plugin alarms debug trace
+  ```
+
 

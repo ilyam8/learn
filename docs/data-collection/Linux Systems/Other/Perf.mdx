@@ -1,89 +1,125 @@
----
-custom_edit_url: "https://github.com/netdata/netdata/edit/master/collectors/perf.plugin/README.md"
-sidebar_label: "Perf"
-learn_status: "Published"
-toc_max_heading_level: "4"
-learn_rel_path: "Data collection/Linux Systems/Other"
-sidebar_position: "618041"
-slug: "/data-collection/linux-systems/other/perf"
----
+------|:----------|:----|
+| perf.cpu_cycles | cpu, ref_cpu | cycles/s |
+| perf.instructions | instructions | instructions/s |
+| perf.instructions_per_cycle | ipc | instructions/cycle |
+| perf.branch_instructions | instructions, misses | instructions/s |
+| perf.cache | references, misses | operations/s |
+| perf.bus_cycles | bus | cycles/s |
+| perf.stalled_cycles | frontend, backend | cycles/s |
+| perf.migrations | migrations | migrations |
+| perf.alignment_faults | faults | faults |
+| perf.emulation_faults | faults | faults |
+| perf.l1d_cache | read_access, read_misses, write_access, write_misses | events/s |
+| perf.l1d_cache_prefetch | prefetches | prefetches/s |
+| perf.l1i_cache | read_access, read_misses | events/s |
+| perf.ll_cache | read_access, read_misses, write_access, write_misses | events/s |
+| perf.dtlb_cache | read_access, read_misses, write_access, write_misses | events/s |
+| perf.itlb_cache | read_access, read_misses | events/s |
+| perf.pbu_cache | read_access | events/s |
 
 
-# Monitor CPU performance statistics (perf.plugin)
 
-`perf.plugin` collects system-wide CPU performance statistics from Performance Monitoring Units (PMU) using
-the `perf_event_open()` system call.
+## Alerts
 
-## Important Notes
+There are no alerts configured by default for this integration.
 
-If you are using [our official native DEB/RPM packages](/docs/installing/native-linux-distribution-packages), you will need to install
-the `netdata-plugin-perf` package using your system package manager.
 
-Accessing hardware PMUs requires root permissions, so the plugin is setuid to root.
+## Setup
 
-Keep in mind that the number of PMUs in a system is usually quite limited and every hardware monitoring
-event for every CPU core needs a separate file descriptor to be opened.
+### Prerequisites
 
-## Charts
+#### Install perf plugin
 
-The plugin provides statistics for general hardware and software performance monitoring events:
+If you are [using our official native DEB/RPM packages](/docs/maintaining/update-netdata-agents#determine-which-installation-method-you-used), make sure the `netdata-plugin-perf` package is installed.
 
-Hardware events:
 
-1.  CPU cycles
-2.  Instructions
-3.  Branch instructions
-4.  Cache operations
-5.  BUS cycles
-6.  Stalled frontend and backend cycles
+#### Enable the pref plugin
 
-Software events:
+The plugin is disabled by default because the number of PMUs is usually quite limited and it is not desired to allow Netdata to struggle silently for PMUs, interfering with other performance monitoring software.
 
-1.  CPU migrations
-2.  Alignment faults
-3.  Emulation faults
+To enable it, use `edit-config` from the Netdata [config directory](/docs/configuring/configuration), which is typically at `/etc/netdata`, to edit the `netdata.conf` file.
 
-Hardware cache events:
-
-1.  L1D cache operations
-2.  L1D prefetch cache operations
-3.  L1I cache operations
-4.  LL cache operations
-5.  DTLB cache operations
-6.  ITLB cache operations
-7.  PBU cache operations
-
-## Configuration
-
-The plugin is disabled by default because the number of PMUs is usually quite limited and it is not desired to
-allow Netdata to struggle silently for PMUs, interfering with other performance monitoring software. If you need to
-enable the perf plugin, edit /etc/netdata/netdata.conf and set:
-
-```raw
-[plugins]
-    perf = yes
+```bash
+cd /etc/netdata   # Replace this path with your Netdata config directory, if different
+sudo ./edit-config netdata.conf
 ```
 
-```raw
+Change the value of the `perf` setting to `yes` in the `[plugins]` section. Save the file and restart the Netdata Agent with `sudo systemctl restart netdata`, or the [appropriate method](/docs/maintaining/starting-and-stopping-netdata-agents) for your system.
+
+
+
+### Configuration
+
+#### File
+
+The configuration file name for this integration is `netdata.conf`.
+Configuration for this specific integration is located in the `[plugin:perf]` section within that file.
+
+The file format is a modified INI syntax. The general structure is:
+
+```ini
+[section1]
+    option1 = some value
+    option2 = some other value
+
+[section2]
+    option3 = some third value
+```
+You can edit the configuration file using the `edit-config` script from the
+Netdata [config directory](/docs/configuring/configuration#the-netdata-config-directory).
+
+```bash
+cd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata
+sudo ./edit-config netdata.conf
+```
+#### Options
+
+You can get the available options running:
+
+```bash
+/usr/libexec/netdata/plugins.d/perf.plugin  --help
+````
+
+
+<details><summary>Config options</summary>
+
+| Name | Description | Default | Required |
+|:----|:-----------|:-------|:--------:|
+| update every | Data collection frequency. | 1 | False |
+| command options | Command options that specify charts shown by plugin. `cycles`, `instructions`, `branch`, `cache`, `bus`, `stalled`, `migrations`, `alignment`, `emulation`, `L1D`, `L1D-prefetch`, `L1I`, `LL`, `DTLB`, `ITLB`, `PBU`. | 1 | True |
+
+</details>
+
+#### Examples
+
+##### All metrics
+
+Monitor all metrics available.
+
+```yaml
 [plugin:perf]
-    update every = 1
     command options = all
+
 ```
+##### CPU cycles
 
-You can use the `command options` parameter to pick what data should be collected and which charts should be
-displayed. If `all` is used, all general performance monitoring counters are probed and corresponding charts
-are enabled for the available counters. You can also define a particular set of enabled charts using the
-following keywords: `cycles`, `instructions`, `branch`, `cache`, `bus`, `stalled`, `migrations`, `alignment`,
-`emulation`, `L1D`, `L1D-prefetch`, `L1I`, `LL`, `DTLB`, `ITLB`, `PBU`.
+Monitor CPU cycles.
 
-## Debugging
+<details><summary>Config</summary>
 
-You can run the plugin by hand:
+```yaml
+[plugin:perf]
+    command options = cycles
 
-```raw
-sudo /usr/libexec/netdata/plugins.d/perf.plugin 1 all debug
 ```
+</details>
 
-You will get verbose output on what the plugin does.
+
+
+## Troubleshooting
+
+### Debug Mode
+
+
 
 

@@ -1,65 +1,67 @@
----
-custom_edit_url: "https://github.com/netdata/netdata/edit/master/collectors/nfacct.plugin/README.md"
-sidebar_label: "Netfilter Accounting"
-learn_status: "Published"
-toc_max_heading_level: "4"
-learn_rel_path: "Data collection/Networking Stack and Network Interfaces"
-sidebar_position: "628080"
-slug: "/data-collection/networking-stack-and-network-interfaces/netfilter-accounting"
----
+------|:----------|:----|
+| netfilter.netlink_new | new, ignore, invalid | connections/s |
+| netfilter.netlink_changes | insert, delete, delete_list | changes/s |
+| netfilter.netlink_search | searched, search_restart, found | searches/s |
+| netfilter.netlink_errors | icmp_error, insert_failed, drop, early_drop | events/s |
+| netfilter.netlink_expect | created, deleted, new | expectations/s |
+| netfilter.nfacct_packets | a dimension per nfacct object | packets/s |
+| netfilter.nfacct_bytes | a dimension per nfacct object | kilobytes/s |
 
 
-# Monitor Netfilter statistics (nfacct.plugin)
 
-`nfacct.plugin` collects Netfilter statistics.
+## Alerts
 
-## Prerequisites
+There are no alerts configured by default for this integration.
 
-If you are using [our official native DEB/RPM packages](/docs/installing/native-linux-distribution-packages), install the
-`netdata-plugin-nfacct` package using your system package manager.
 
-If you built Netdata locally:
+## Setup
 
-1.  install `libmnl-dev` and `libnetfilter-acct-dev` using the package manager of your system.
+### Prerequisites
 
-2.  re-install Netdata from source. The installer will detect that the required libraries are now available and will also build `netdata.plugin`.
+#### Install required packages
 
-Keep in mind that NFACCT requires root access, so the plugin is setuid to root.
+Install `libmnl-dev` and `libnetfilter-acct-dev` using the package manager of your system.
 
-## Charts
 
-The plugin provides Netfilter connection tracker statistics and nfacct packet and bandwidth accounting:
 
-Connection tracker:
+### Configuration
 
-1.  Connections.
-2.  Changes.
-3.  Expectations.
-4.  Errors.
-5.  Searches.
+#### File
 
-Netfilter accounting:
+The configuration file name for this integration is `netdata.conf`.
+Configuration for this specific integration is located in the `[plugin:nfacct]` section within that file.
 
-1.  Packets.
-2.  Bandwidth.
+The file format is a modified INI syntax. The general structure is:
 
-## Configuration
+```ini
+[section1]
+    option1 = some value
+    option2 = some other value
 
-If you need to disable NFACCT for Netdata, edit /etc/netdata/netdata.conf and set:
-
+[section2]
+    option3 = some third value
 ```
-[plugins]
-    nfacct = no
+You can edit the configuration file using the `edit-config` script from the
+Netdata [config directory](/docs/configuring/configuration#the-netdata-config-directory).
+
+```bash
+cd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata
+sudo ./edit-config netdata.conf
 ```
+#### Options
 
-## Debugging
 
-You can run the plugin by hand:
 
-```
-sudo /usr/libexec/netdata/plugins.d/nfacct.plugin 1 debug
-```
+<details><summary>Config options</summary>
 
-You will get verbose output on what the plugin does.
+| Name | Description | Default | Required |
+|:----|:-----------|:-------|:--------:|
+| update every | Data collection frequency. | 1 | False |
+| command options | Additinal parameters for collector |  | False |
+
+</details>
+
+#### Examples
+There are no configuration examples.
 
 

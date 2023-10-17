@@ -1,72 +1,138 @@
----
-custom_edit_url: "https://github.com/netdata/go.d.plugin/edit/master/modules/haproxy/README.md"
-sidebar_label: "HAProxy"
-learn_status: "Published"
-toc_max_heading_level: "4"
-learn_rel_path: "Data collection/Web Servers and Web Proxies"
-description: "Monitor the health and performance of HAProxy with zero configuration, per-second metric granularity, and interactive visualizations."
-sidebar_position: "648120"
-slug: "/data-collection/web-servers-and-web-proxies/haproxy"
----
+------|:----------|:----|
+| haproxy.backend_current_sessions | a dimension per proxy | sessions |
+| haproxy.backend_sessions | a dimension per proxy | sessions/s |
+| haproxy.backend_response_time_average | a dimension per proxy | milliseconds |
+| haproxy.backend_queue_time_average | a dimension per proxy | milliseconds |
+| haproxy.backend_current_queue | a dimension per proxy | requests |
+
+### Per proxy
+
+These metrics refer to the Proxy.
+
+This scope has no labels.
+
+Metrics:
+
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| haproxy.backend_http_responses | 1xx, 2xx, 3xx, 4xx, 5xx, other | responses/s |
+| haproxy.backend_network_io | in, out | bytes/s |
 
 
-# HAProxy collector
 
-[`HAProxy`](http://www.haproxy.org/) is a free, very fast and reliable solution offering high availability, load
-balancing, and proxying for TCP and HTTP-based applications.
+## Alerts
 
-This module will monitor one or more `HAProxy` instances, depending on your configuration.
+There are no alerts configured by default for this integration.
 
-## Requirements
 
-- `HAProxy` v2.0+ (or 1.9r1+ for Enterprise users) with enabled PROMEX addon. PROMEX is not built by default with
-  `HAProxy`. It is provided as an extra component for
-  everyone [who wants to use it](https://github.com/haproxy/haproxy/tree/master/addons/promex).
+## Setup
 
-## Metrics
+### Prerequisites
 
-Current implementation collects
-only [backend](https://www.haproxy.com/documentation/hapee/latest/configuration/config-sections/backend/) metrics.
+#### Enable PROMEX addon.
 
-All metrics have "haproxy." prefix.
+To enable PROMEX addon, follow the [official documentation](https://github.com/haproxy/haproxy/tree/master/addons/promex).
 
-| Metric                        | Scope  |           Dimensions           |    Units     |
-|-------------------------------|:------:|:------------------------------:|:------------:|
-| backend_current_sessions      | global |  <i>a dimension per proxy</i>  |   sessions   |
-| backend_sessions              | global |  <i>a dimension per proxy</i>  |  sessions/s  |
-| backend_response_time_average | global |  <i>a dimension per proxy</i>  | milliseconds |
-| backend_queue_time_average    | global |  <i>a dimension per proxy</i>  | milliseconds |
-| backend_current_queue         | global |  <i>a dimension per proxy</i>  |   requests   |
-| backend_http_responses        | proxy  | 1xx, 2xx, 3xx, 4xx, 5xx, other | responses/s  |
-| backend_network_io            | proxy  |            in, out             |   bytes/s    |
 
-## Charts
 
-### Backend
+### Configuration
 
-- Sessions
-    - Current number of active sessions in `sessions`
-    - Sessions rate in `sessions/s`
-- Responses
-    - Average response time for last 1024 successful connections in `milliseconds`
-    - HTTP responses by code class in `responses/s`
-- Queue
-    - Average queue time for last 1024 successful connections in `milliseconds`
-    - Current number of queued requests in `requests`
-- Network
-    - Network traffic in `bytes/s`
+#### File
 
-## Configuration
+The configuration file name for this integration is `go.d/haproxy.conf`.
 
-Edit the `go.d/haproxy.conf` configuration file using `edit-config` from the
-Netdata [config directory](/docs/configuring/configuration), which is typically at `/etc/netdata`.
+
+You can edit the configuration file using the `edit-config` script from the
+Netdata [config directory](/docs/configuring/configuration#the-netdata-config-directory).
 
 ```bash
-cd /etc/netdata # Replace this path with your Netdata config directory
+cd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata
 sudo ./edit-config go.d/haproxy.conf
 ```
+#### Options
 
-Needs only `url` to server's `/metrics` endpoint. Here is an example for 2 servers:
+The following options can be defined globally: update_every, autodetection_retry.
+
+
+<details><summary>Config options</summary>
+
+| Name | Description | Default | Required |
+|:----|:-----------|:-------|:--------:|
+| update_every | Data collection frequency. | 1 | False |
+| autodetection_retry | Recheck interval in seconds. Zero means no recheck will be scheduled. | 0 | False |
+| url | Server URL. | http://127.0.0.1 | True |
+| timeout | HTTP request timeout. | 1 | False |
+| username | Username for basic HTTP authentication. |  | False |
+| password | Password for basic HTTP authentication. |  | False |
+| proxy_url | Proxy URL. |  | False |
+| proxy_username | Username for proxy basic HTTP authentication. |  | False |
+| proxy_password | Password for proxy basic HTTP authentication. |  | False |
+| method | HTTP request method. | GET | False |
+| body | HTTP request body. |  | False |
+| headers | HTTP request headers. |  | False |
+| not_follow_redirects | Redirect handling policy. Controls whether the client follows redirects. | False | False |
+| tls_skip_verify | Server certificate chain and hostname validation policy. Controls whether the client performs this check. | False | False |
+| tls_ca | Certification authority that the client uses when verifying the server's certificates. |  | False |
+| tls_cert | Client TLS certificate. |  | False |
+| tls_key | Client TLS key. |  | False |
+
+</details>
+
+#### Examples
+
+##### Basic
+
+A basic example configuration.
+
+<details><summary>Config</summary>
+
+```yaml
+jobs:
+  - name: local
+    url: http://127.0.0.1:8404/metrics
+
+```
+</details>
+
+##### HTTP authentication
+
+Basic HTTP authentication.
+
+<details><summary>Config</summary>
+
+```yaml
+jobs:
+  - name: local
+    url: http://127.0.0.1:8404/metrics
+    username: username
+    password: password
+
+```
+</details>
+
+##### HTTPS with self-signed certificate
+
+NGINX Plus with enabled HTTPS and self-signed certificate.
+
+<details><summary>Config</summary>
+
+```yaml
+jobs:
+  - name: local
+    url: https://127.0.0.1:8404/metrics
+    tls_skip_verify: yes
+
+```
+</details>
+
+##### Multi-instance
+
+> **Note**: When you define multiple jobs, their names must be unique.
+
+Collecting metrics from local and remote instances.
+
+
+<details><summary>Config</summary>
 
 ```yaml
 jobs:
@@ -74,13 +140,16 @@ jobs:
     url: http://127.0.0.1:8404/metrics
 
   - name: remote
-    url: http://203.0.113.10:8404/metrics
-```
+    url: http://192.0.2.1:8404/metrics
 
-For all available options please see
-module [configuration file](https://github.com/netdata/go.d.plugin/blob/master/config/go.d/haproxy.conf).
+```
+</details>
+
+
 
 ## Troubleshooting
+
+### Debug Mode
 
 To troubleshoot issues with the `haproxy` collector, run the `go.d.plugin` with the debug option enabled. The output
 should give you clues as to why the collector isn't working.
@@ -103,3 +172,5 @@ should give you clues as to why the collector isn't working.
   ```bash
   ./go.d.plugin -d -m haproxy
   ```
+
+

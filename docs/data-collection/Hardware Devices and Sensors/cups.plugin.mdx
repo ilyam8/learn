@@ -1,70 +1,76 @@
----
-custom_edit_url: "https://github.com/netdata/netdata/edit/master/collectors/cups.plugin/README.md"
-sidebar_label: "cups.plugin"
-learn_status: "Published"
-toc_max_heading_level: "4"
-learn_rel_path: "Data collection/Hardware Devices and Sensors"
-sidebar_position: "678280"
-slug: "/data-collection/hardware-devices-and-sensors/cups.plugin"
----
+------|:----------|:----|
+| cups.dests_state | idle, printing, stopped | dests |
+| cups.dests_option | total, acceptingjobs, shared | dests |
+| cups.job_num | pending, held, processing | jobs |
+| cups.job_size | pending, held, processing | KB |
+
+### Per destination
 
 
-# Printers (cups.plugin)
 
-`cups.plugin` collects Common Unix Printing System (CUPS) metrics.
+This scope has no labels.
 
-## Prerequisites
+Metrics:
 
-This plugin needs a running local CUPS daemon (`cupsd`). This plugin does not need any configuration. Supports cups since version 1.7.
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| cups.destination_job_num | pending, held, processing | jobs |
+| cups.destination_job_size | pending, held, processing | KB |
 
-If you installed Netdata using our native packages, you will have to additionally install `netdata-plugin-cups` to use this plugin for data collection. It is not installed by default due to the large number of dependencies it requires.
 
-## Charts
 
-`cups.plugin` provides one common section `destinations` and one section per destination.
+## Alerts
 
-> Destinations in CUPS represent individual printers or classes (collections or pools) of printers (<https://www.cups.org/doc/cupspm.html#working-with-destinations>)
+There are no alerts configured by default for this integration.
 
-The section `server` provides these charts:
 
-1.  **destinations by state**
+## Setup
 
-    -   idle
-    -   printing
-    -   stopped
+### Prerequisites
 
-2.  **destinations by options**
+#### Minimum setup
 
-    -   total
-    -   accepting jobs
-    -   shared
+The CUPS server must be installed and running. If you installed `netdata` using a package manager, it is also necessary to install the package `netdata-plugin-cups`.
 
-3.  **total job number by status**
 
-    -   pending
-    -   processing
-    -   held
+### Configuration
 
-4.  **total job size by status**
+#### File
 
-    -   pending
-    -   processing
-    -   held
+The configuration file name for this integration is `netdata.conf`.
+Configuration for this specific integration is located in the `[plugin:cups]` section within that file.
 
-For each destination the plugin provides these charts:
+The file format is a modified INI syntax. The general structure is:
 
-1.  **job number by status**
+```ini
+[section1]
+    option1 = some value
+    option2 = some other value
 
-    -   pending
-    -   held
-    -   processing
+[section2]
+    option3 = some third value
+```
+You can edit the configuration file using the `edit-config` script from the
+Netdata [config directory](/docs/configuring/configuration#the-netdata-config-directory).
 
-2.  **job size by status**
+```bash
+cd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata
+sudo ./edit-config netdata.conf
+```
+#### Options
 
-    -   pending
-    -   held
-    -   processing
 
-At the moment only job status pending, processing, and held are reported because we do not have a method to collect stopped, canceled, aborted and completed jobs which scales.
+
+<details><summary>Config options</summary>
+
+| Name | Description | Default | Required |
+|:----|:-----------|:-------|:--------:|
+| update every | Data collection frequency. | 1 | False |
+| command options | Additional parameters for the collector |  | False |
+
+</details>
+
+#### Examples
+There are no configuration examples.
 
 

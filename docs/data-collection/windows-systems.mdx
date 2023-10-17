@@ -1,411 +1,688 @@
----
-custom_edit_url: "https://github.com/netdata/go.d.plugin/edit/master/modules/windows/README.md"
-sidebar_label: "Windows Systems"
-learn_status: "Published"
-toc_max_heading_level: 4
-learn_rel_path: "Data collection"
-description: "Monitor the health and performance of Windows machines with zero configuration, per-second metric granularity, and interactive visualizations."
-sidebar_position: "620000"
----
-# Windows machine collector
+------|:----------|:----|
+| windows.cpu_utilization_total | dpc, user, privileged, interrupt | percentage |
+| windows.memory_utilization | available, used | bytes |
+| windows.memory_page_faults | page_faults | events/s |
+| windows.memory_swap_utilization | available, used | bytes |
+| windows.memory_swap_operations | read, write | operations/s |
+| windows.memory_swap_pages | read, written | pages/s |
+| windows.memory_cached | cached | KiB |
+| windows.memory_cache_faults | cache_faults | events/s |
+| windows.memory_system_pool | paged, non-paged | bytes |
+| windows.tcp_conns_established | ipv4, ipv6 | connections |
+| windows.tcp_conns_active | ipv4, ipv6 | connections/s |
+| windows.tcp_conns_passive | ipv4, ipv6 | connections/s |
+| windows.tcp_conns_failures | ipv4, ipv6 | failures/s |
+| windows.tcp_conns_resets | ipv4, ipv6 | resets/s |
+| windows.tcp_segments_received | ipv4, ipv6 | segments/s |
+| windows.tcp_segments_sent | ipv4, ipv6 | segments/s |
+| windows.tcp_segments_retransmitted | ipv4, ipv6 | segments/s |
+| windows.os_processes | processes | number |
+| windows.os_users | users | users |
+| windows.os_visible_memory_usage | free, used | bytes |
+| windows.os_paging_files_usage | free, used | bytes |
+| windows.system_threads | threads | number |
+| windows.system_uptime | time | seconds |
+| windows.logon_type_sessions | system, interactive, network, batch, service, proxy, unlock, network_clear_text, new_credentials, remote_interactive, cached_interactive, cached_remote_interactive, cached_unlock | seconds |
+| windows.processes_cpu_utilization | a dimension per process | percentage |
+| windows.processes_handles | a dimension per process | handles |
+| windows.processes_io_bytes | a dimension per process | bytes/s |
+| windows.processes_io_operations | a dimension per process | operations/s |
+| windows.processes_page_faults | a dimension per process | pgfaults/s |
+| windows.processes_page_file_bytes | a dimension per process | bytes |
+| windows.processes_pool_bytes | a dimension per process | bytes |
+| windows.processes_threads | a dimension per process | threads |
+| ad.database_operations | add, delete, modify, recycle | operations/s |
+| ad.directory_operations | read, write, search | operations/s |
+| ad.name_cache_lookups | lookups | lookups/s |
+| ad.name_cache_hits | hits | hits/s |
+| ad.atq_average_request_latency | time | seconds |
+| ad.atq_outstanding_requests | outstanding | requests |
+| ad.dra_replication_intersite_compressed_traffic | inbound, outbound | bytes/s |
+| ad.dra_replication_intrasite_compressed_traffic | inbound, outbound | bytes/s |
+| ad.dra_replication_sync_objects_remaining | inbound, outbound | objects |
+| ad.dra_replication_objects_filtered | inbound, outbound | objects/s |
+| ad.dra_replication_properties_updated | inbound, outbound | properties/s |
+| ad.dra_replication_properties_filtered | inbound, outbound | properties/s |
+| ad.dra_replication_pending_syncs | pending | syncs |
+| ad.dra_replication_sync_requests | requests | requests/s |
+| ad.ds_threads | in_use | threads |
+| ad.ldap_last_bind_time | last_bind | seconds |
+| ad.binds | binds | binds/s |
+| ad.ldap_searches | searches | searches/s |
+| adfs.ad_login_connection_failures | connection | failures/s |
+| adfs.certificate_authentications | authentications | authentications/s |
+| adfs.db_artifact_failures | connection | failures/s |
+| adfs.db_artifact_query_time_seconds | query_time | seconds/s |
+| adfs.db_config_failures | connection | failures/s |
+| adfs.db_config_query_time_seconds | query_time | seconds/s |
+| adfs.device_authentications | authentications | authentications/s |
+| adfs.external_authentications | success, failure | authentications/s |
+| adfs.federated_authentications | authentications | authentications/s |
+| adfs.federation_metadata_requests | requests | requests/s |
+| adfs.oauth_authorization_requests | requests | requests/s |
+| adfs.oauth_client_authentications | success, failure | authentications/s |
+| adfs.oauth_client_credentials_requests | success, failure | requests/s |
+| adfs.oauth_client_privkey_jwt_authentications | success, failure | authentications/s |
+| adfs.oauth_client_secret_basic_authentications | success, failure | authentications/s |
+| adfs.oauth_client_secret_post_authentications | success, failure | authentications/s |
+| adfs.oauth_client_windows_authentications | success, failure | authentications/s |
+| adfs.oauth_logon_certificate_requests | success, failure | requests/s |
+| adfs.oauth_password_grant_requests | success, failure | requests/s |
+| adfs.oauth_token_requests_success | success | requests/s |
+| adfs.passive_requests | passive | requests/s |
+| adfs.passport_authentications | passport | authentications/s |
+| adfs.password_change_requests | success, failure | requests/s |
+| adfs.samlp_token_requests_success | success | requests/s |
+| adfs.sso_authentications | success, failure | authentications/s |
+| adfs.token_requests | requests | requests/s |
+| adfs.userpassword_authentications | success, failure | authentications/s |
+| adfs.windows_integrated_authentications | authentications | authentications/s |
+| adfs.wsfed_token_requests_success | success | requests/s |
+| adfs.wstrust_token_requests_success | success | requests/s |
+| exchange.activesync_ping_cmds_pending | pending | commands |
+| exchange.activesync_requests | received | requests/s |
+| exchange.activesync_sync_cmds | processed | commands/s |
+| exchange.autodiscover_requests | processed | requests/s |
+| exchange.avail_service_requests | serviced | requests/s |
+| exchange.owa_current_unique_users | logged-in | users |
+| exchange.owa_requests_total | handled | requests/s |
+| exchange.rpc_active_user_count | active | users |
+| exchange.rpc_avg_latency | latency | seconds |
+| exchange.rpc_connection_count | connections | connections |
+| exchange.rpc_operations | operations | operations/s |
+| exchange.rpc_requests | processed | requests |
+| exchange.rpc_user_count | users | users |
+| exchange.transport_queues_active_mail_box_delivery | low, high, none, normal | messages/s |
+| exchange.transport_queues_external_active_remote_delivery | low, high, none, normal | messages/s |
+| exchange.transport_queues_external_largest_delivery | low, high, none, normal | messages/s |
+| exchange.transport_queues_internal_active_remote_delivery | low, high, none, normal | messages/s |
+| exchange.transport_queues_internal_largest_delivery | low, high, none, normal | messages/s |
+| exchange.transport_queues_retry_mailbox_delivery | low, high, none, normal | messages/s |
+| exchange.transport_queues_poison | low, high, none, normal | messages/s |
+| hyperv.vms_health | ok, critical | vms |
+| hyperv.root_partition_device_space_pages | 4K, 2M, 1G | pages |
+| hyperv.root_partition_gpa_space_pages | 4K, 2M, 1G | pages |
+| hyperv.root_partition_gpa_space_modifications | gpa | modifications/s |
+| hyperv.root_partition_attached_devices | attached | devices |
+| hyperv.root_partition_deposited_pages | deposited | pages |
+| hyperv.root_partition_skipped_interrupts | skipped | interrupts |
+| hyperv.root_partition_device_dma_errors | illegal_dma | requests |
+| hyperv.root_partition_device_interrupt_errors | illegal_interrupt | requests |
+| hyperv.root_partition_device_interrupt_throttle_events | throttling | events |
+| hyperv.root_partition_io_tlb_flush | flushes | flushes/s |
+| hyperv.root_partition_address_space | address_spaces | address spaces |
+| hyperv.root_partition_virtual_tlb_flush_entries | flushes | flushes/s |
+| hyperv.root_partition_virtual_tlb_pages | used | pages |
 
-This module will monitor one or more Windows machines, using
-the [windows_exporter](https://github.com/prometheus-community/windows_exporter).
+### Per cpu core
 
-## Requirements
+TBD
 
-Netdata monitors Windows hosts by utilizing the
-[Prometheus exporter for Windows machines](https://github.com/prometheus-community/windows_exporter), a native Windows
-agent running on each host.
+Labels:
 
-To quickly test Netdata directly on a Windows machine, you can use
-the [Netdata MSI installer](https://github.com/netdata/msi-installer#instructions). The installer runs Netdata in a
-custom WSL deployment. WSL was not designed for production environments, so **we do not recommend using the MSI
-installer in production**.
+| Label      | Description     |
+|:-----------|:----------------|
+| core | TBD |
 
-For production use, you need to install Netdata on one or more nodes running Linux:
+Metrics:
 
-![windows](https://user-images.githubusercontent.com/43294513/232522572-1fe51228-953b-43d2-81c4-dcb0a8974db5.jpg)
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| windows.cpu_core_utilization | dpc, user, privileged, interrupt | percentage |
+| windows.cpu_core_interrupts | interrupts | interrupts/s |
+| windows.cpu_core_dpcs | dpcs | dpcs/s |
+| windows.cpu_core_cstate | c1, c2, c3 | percentage |
 
-- Install the
-  latest [Prometheus exporter for Windows](https://github.com/prometheus-community/windows_exporter/releases)
-  on every Windows host you want to monitor, enabling the collectors listed here:
-  ```msiexec /i "[PATH_TO_MSI]" ENABLED_COLLECTORS=process,ad,adcs,adfs,cpu,dns,memory,mssql,net,os,tcp,logical_disk```
-- Get the installation commands from [Netdata Cloud](https://app.netdata.cloud) and install Netdata on one or more Linux
-  nodes.
-- Configure each Netdata instance to collect data remotely, from several Windows hosts. Just add one job
-  for each host to  `windows.conf`, as shown in the [configuration section](#configuration).
+### Per logical disk
 
-Automated charts and alerts for your entire Windows infrastructure will be automatically generated.
-Each Windows host (data collection job) will be identifiable as an "instance" in the Netdata Cloud charts.
+TBD
 
-## Metrics
+Labels:
 
-The module collects metrics from the following collectors:
+| Label      | Description     |
+|:-----------|:----------------|
+| disk | TBD |
 
-- [cpu](https://github.com/prometheus-community/windows_exporter/blob/master/docs/collector.cpu.md)
-- [iis](https://github.com/prometheus-community/windows_exporter/blob/master/docs/collector.iis.md)
-- [memory](https://github.com/prometheus-community/windows_exporter/blob/master/docs/collector.memory.md)
-- [net](https://github.com/prometheus-community/windows_exporter/blob/master/docs/collector.net.md)
-- [logical_disk](https://github.com/prometheus-community/windows_exporter/blob/master/docs/collector.logical_disk.md)
-- [os](https://github.com/prometheus-community/windows_exporter/blob/master/docs/collector.os.md)
-- [system](https://github.com/prometheus-community/windows_exporter/blob/master/docs/collector.system.md)
-- [logon](https://github.com/prometheus-community/windows_exporter/blob/master/docs/collector.logon.md)
-- [tcp](https://github.com/prometheus-community/windows_exporter/blob/master/docs/collector.tcp.md)
-- [thermalzone](https://github.com/prometheus-community/windows_exporter/blob/master/docs/collector.thermalzone.md)
-- [process](https://github.com/prometheus-community/windows_exporter/blob/master/docs/collector.process.md)
-- [service](https://github.com/prometheus-community/windows_exporter/blob/master/docs/collector.service.md)
-- [mssql](https://github.com/prometheus-community/windows_exporter/blob/master/docs/collector.mssql.md)
-- [ad](https://github.com/prometheus-community/windows_exporter/blob/master/docs/collector.ad.md)
-- [adcs](https://github.com/prometheus-community/windows_exporter/blob/master/docs/collector.adcs.md)
-- [adfs](https://github.com/prometheus-community/windows_exporter/blob/master/docs/collector.adfs.md)
-- [netframework_clrexceptions](https://github.com/prometheus-community/windows_exporter/blob/master/docs/collector.netframework_clrexceptions.md)
-- [netframework_clrinterop](https://github.com/prometheus-community/windows_exporter/blob/master/docs/collector.netframework_clrinterop.md)
-- [netframework_clrjit](https://github.com/prometheus-community/windows_exporter/blob/master/docs/collector.netframework_clrjit.md)
-- [netframework_clrloading](https://github.com/prometheus-community/windows_exporter/blob/master/docs/collector.netframework_clrloading.md)
-- [netframework_clrlocksandthreads](https://github.com/prometheus-community/windows_exporter/blob/master/docs/collector.netframework_clrlocksandthreads.md)
-- [netframework_clrmemory](https://github.com/prometheus-community/windows_exporter/blob/master/docs/collector.netframework_clrmemory.md)
-- [netframework_clrremoting](https://github.com/prometheus-community/windows_exporter/blob/master/docs/collector.netframework_clrremoting.md)
-- [exchange](https://github.com/prometheus-community/windows_exporter/blob/master/docs/collector.exchange.md)
-- [hyperv](https://github.com/prometheus-community/windows_exporter/blob/master/docs/collector.hyperv.md)
+Metrics:
 
-All metrics have a prefix.
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| windows.logical_disk_utilization | free, used | bytes |
+| windows.logical_disk_bandwidth | read, write | bytes/s |
+| windows.logical_disk_operations | reads, writes | operations/s |
+| windows.logical_disk_latency | read, write | seconds |
 
-Labels per scope:
+### Per network device
 
-- global: no labels.
-- logical disk: disk.
-- network device: nic.
-- thermalzone: thermalzone.
-- website: website.
-- mssql instance: mssql_instance.
-- database: mssql_instance, database.
-- certificate template: cert_template.
-- service: service.
-- process: process.
-- vm: vm_name.
-- vm device: vm_device.
-- vm interface: vm_interface.
-- vswitch: vswitch.
+TBD
 
-| Metric                                                               |        Scope         |                                                                                     Dimensions                                                                                     |       Units       |
-|----------------------------------------------------------------------|:--------------------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:-----------------:|
-| windows.cpu_utilization_total                                        |        global        |                                                                          dpc, user, privileged, interrupt                                                                          |    percentage     |
-| windows.cpu_core_utilization                                         |       cpu core       |                                                                          dpc, user, privileged, interrupt                                                                          |    percentage     |
-| windows.cpu_core_interrupts                                          |       cpu core       |                                                                                     interrupts                                                                                     |   interrupts/s    |
-| windows.cpu_core_dpcs                                                |       cpu core       |                                                                                        dpcs                                                                                        |      dpcs/s       |
-| windows.cpu_core_cstate                                              |       cpu core       |                                                                                     c1, c2, c3                                                                                     |    percentage     |
-| windows.memory_utilization                                           |        global        |                                                                                  available, used                                                                                   |       bytes       |
-| windows.memory_page_faults                                           |        global        |                                                                                    page_faults                                                                                     |     events/s      |
-| windows.memory_swap_utilization                                      |        global        |                                                                                  available, used                                                                                   |       bytes       |
-| windows.memory_swap_operations                                       |        global        |                                                                                    read, write                                                                                     |   operations/s    |
-| windows.memory_swap_pages                                            |        global        |                                                                                   read, written                                                                                    |      pages/s      |
-| windows.memory_cached                                                |        global        |                                                                                       cached                                                                                       |        KiB        |
-| windows.memory_cache_faults                                          |        global        |                                                                                    cache_faults                                                                                    |     events/s      |
-| windows.memory_system_pool                                           |        global        |                                                                                  paged, non-paged                                                                                  |       bytes       |
-| windows.logical_disk_utilization                                     |     logical disk     |                                                                                     free, used                                                                                     |       bytes       |
-| windows.logical_disk_bandwidth                                       |     logical disk     |                                                                                    read, write                                                                                     |      bytes/s      |
-| windows.logical_disk_operations                                      |     logical disk     |                                                                                   reads, writes                                                                                    |   operations/s    |
-| windows.logical_disk_latency                                         |     logical disk     |                                                                                    read, write                                                                                     |      seconds      |
-| windows.net_nic_bandwidth                                            |    network device    |                                                                                   received, sent                                                                                   |    kilobits/s     |
-| windows.net_nic_packets                                              |    network device    |                                                                                   received, sent                                                                                   |     packets/s     |
-| windows.net_nic_errors                                               |    network device    |                                                                                 inbound, outbound                                                                                  |     errors/s      |
-| windows.net_nic_discarded                                            |    network device    |                                                                                 inbound, outbound                                                                                  |    discards/s     |
-| windows.tcp_conns_established                                        |        global        |                                                                                     ipv4, ipv6                                                                                     |    connections    |
-| windows.tcp_conns_active                                             |        global        |                                                                                     ipv4, ipv6                                                                                     |   connections/s   |
-| windows.tcp_conns_passive                                            |        global        |                                                                                     ipv4, ipv6                                                                                     |   connections/s   |
-| windows.tcp_conns_failures                                           |        global        |                                                                                     ipv4, ipv6                                                                                     |    failures/s     |
-| windows.tcp_conns_resets                                             |        global        |                                                                                     ipv4, ipv6                                                                                     |     resets/s      |
-| windows.tcp_segments_received                                        |        global        |                                                                                     ipv4, ipv6                                                                                     |    segments/s     |
-| windows.tcp_segments_sent                                            |        global        |                                                                                     ipv4, ipv6                                                                                     |    segments/s     |
-| windows.tcp_segments_retransmitted                                   |        global        |                                                                                     ipv4, ipv6                                                                                     |    segments/s     |
-| windows.os_processes                                                 |        global        |                                                                                     processes                                                                                      |      number       |
-| windows.os_users                                                     |        global        |                                                                                       users                                                                                        |       users       |
-| windows.os_visible_memory_usage                                      |        global        |                                                                                     free, used                                                                                     |       bytes       |
-| windows.os_paging_files_usage                                        |        global        |                                                                                     free, used                                                                                     |       bytes       |
-| windows.system_threads                                               |        global        |                                                                                      threads                                                                                       |      number       |
-| windows.system_uptime                                                |        global        |                                                                                        time                                                                                        |      seconds      |
-| windows.logon_type_sessions                                          |        global        | system, interactive, network, batch, service, proxy, unlock, network_clear_text, new_credentials, remote_interactive, cached_interactive, cached_remote_interactive, cached_unlock |      seconds      |
-| windows.thermalzone_temperature                                      |     thermalzone      |                                                                                    temperature                                                                                     |      Celsius      |
-| windows.processes_cpu_utilization                                    |        global        |                                                                           <i>a dimension per process</i>                                                                           |    percentage     |
-| windows.processes_handles                                            |        global        |                                                                           <i>a dimension per process</i>                                                                           |      handles      |
-| windows.processes_io_bytes                                           |        global        |                                                                           <i>a dimension per process</i>                                                                           |      bytes/s      |
-| windows.processes_io_operations                                      |        global        |                                                                           <i>a dimension per process</i>                                                                           |   operations/s    |
-| windows.processes_page_faults                                        |        global        |                                                                           <i>a dimension per process</i>                                                                           |    pgfaults/s     |
-| windows.processes_page_file_bytes                                    |        global        |                                                                           <i>a dimension per process</i>                                                                           |       bytes       |
-| windows.processes_pool_bytes                                         |        global        |                                                                           <i>a dimension per process</i>                                                                           |       bytes       |
-| windows.processes_threads                                            |        global        |                                                                           <i>a dimension per process</i>                                                                           |      threads      |
-| windows.service_state                                                |       service        |                                          running, stopped, start_pending, stop_pending, continue_pending, pause_pending, paused, unknown                                           |       state       |
-| windows.service_status                                               |       service        |                                 ok, error, unknown, degraded, pred_fail, starting, stopping, service, stressed, nonrecover, no_contact, lost_comm                                  |      status       |
-| iis.website_traffic                                                  |       website        |                                                                                   received, sent                                                                                   |      bytes/s      |
-| iis.website_requests_rate                                            |       website        |                                                                                      requests                                                                                      |    requests/s     |
-| iis.website_active_connections_count                                 |       website        |                                                                                       active                                                                                       |    connections    |
-| iis.website_users_count                                              |       website        |                                                                              anonymous, non_anonymous                                                                              |       users       |
-| iis.website_connection_attempts_rate                                 |       website        |                                                                                     connection                                                                                     |    attempts/s     |
-| iis.website_isapi_extension_requests_count                           |       website        |                                                                                       isapi                                                                                        |     requests      |
-| iis.website_isapi_extension_requests_rate                            |       website        |                                                                                       isapi                                                                                        |    requests/s     |
-| iis.website_ftp_file_transfer_rate                                   |       website        |                                                                                   received, sent                                                                                   |      files/s      |
-| iis.website_logon_attempts_rate                                      |       website        |                                                                                       logon                                                                                        |    attempts/s     |
-| iis.website_errors_rate                                              |       website        |                                                                        document_locked, document_not_found                                                                         |     errors/s      |
-| iis.website_uptime                                                   |       website        |                                                                        document_locked, document_not_found                                                                         |      seconds      |
-| mssql.instance_accessmethods_page_splits                             |    mssql instance    |                                                                                        page                                                                                        |     splits/s      |
-| mssql.instance_cache_hit_ratio                                       |    mssql instance    |                                                                                     hit_ratio                                                                                      |    percentage     |
-| mssql.instance_bufman_checkpoint_pages                               |    mssql instance    |                                                                                      flushed                                                                                       |      pages/s      |
-| mssql.instance_bufman_page_life_expectancy                           |    mssql instance    |                                                                                  life_expectancy                                                                                   |      seconds      |
-| mssql.instance_bufman_iops                                           |    mssql instance    |                                                                                   read, written                                                                                    |       iops        |
-| mssql.instance_blocked_processes                                     |    mssql instance    |                                                                                      blocked                                                                                       |     processes     |
-| mssql.instance_user_connection                                       |    mssql instance    |                                                                                        user                                                                                        |    connections    |
-| mssql.instance_locks_lock_wait                                       |    mssql instance    |                                   alloc_unit, application, database, extent, file, hobt, key, metadata, oib, object, page, rid, row_group, xact                                    |      locks/s      |
-| mssql.instance_locks_deadlocks                                       |    mssql instance    |                                   alloc_unit, application, database, extent, file, hobt, key, metadata, oib, object, page, rid, row_group, xact                                    |      locks/s      |
-| mssql.instance_memmgr_connection_memory_bytes                        |    mssql instance    |                                                                                       memory                                                                                       |       bytes       |
-| mssql.instance_memmgr_external_benefit_of_memory                     |    mssql instance    |                                                                                      benefit                                                                                       |       bytes       |
-| mssql.instance_memmgr_pending_memory_grants                          |    mssql instance    |                                                                                      pending                                                                                       |     processes     |
-| mssql.instance_memmgr_server_memory                                  |    mssql instance    |                                                                                       memory                                                                                       |       bytes       |
-| mssql.instance_sql_errors                                            |    mssql instance    |                                                                      db_offline, info, kill_connection, user                                                                       |      errors       |
-| mssql.instance_sqlstats_auto_parameterization_attempts               |    mssql instance    |                                                                                       failed                                                                                       |    attempts/s     |
-| mssql.instance_sqlstats_batch_requests                               |    mssql instance    |                                                                                       batch                                                                                        |    requests/s     |
-| mssql.instance_sqlstats_safe_auto_parameterization_attempts          |    mssql instance    |                                                                                        safe                                                                                        |    attempts/s     |
-| mssql.instance_sqlstats_sql_compilations                             |    mssql instance    |                                                                                    compilations                                                                                    |  compilations/s   |
-| mssql.instance_sqlstats_sql_recompilations                           |    mssql instance    |                                                                                     recompiles                                                                                     |   recompiles/s    |
-| mssql.database_active_transactions                                   |       database       |                                                                                       active                                                                                       |   transactions    |
-| mssql.database_backup_restore_operations                             |       database       |                                                                                       backup                                                                                       |   operations/s    |
-| mssql.database_data_files_size                                       |       database       |                                                                                        size                                                                                        |       bytes       |
-| mssql.database_log_flushed                                           |       database       |                                                                                      flushed                                                                                       |      bytes/s      |
-| mssql.database_log_flushes                                           |       database       |                                                                                        log                                                                                         |     flushes/s     |
-| mssql.database_transactions                                          |       database       |                                                                                    transactions                                                                                    |  transactions/s   |
-| mssql.database_write_transactions                                    |       database       |                                                                                       write                                                                                        |  transactions/s   |
-| ad.database_operations                                               |        global        |                                                                            add, delete, modify, recycle                                                                            |   operations/s    |
-| ad.directory_operations                                              |        global        |                                                                                read, write, search                                                                                 |   operations/s    |
-| ad.name_cache_lookups                                                |        global        |                                                                                      lookups                                                                                       |     lookups/s     |
-| ad.name_cache_hits                                                   |        global        |                                                                                        hits                                                                                        |      hits/s       |
-| ad.atq_average_request_latency                                       |        global        |                                                                                        time                                                                                        |      seconds      |
-| ad.atq_outstanding_requests                                          |        global        |                                                                                    outstanding                                                                                     |     requests      |
-| ad.dra_replication_intersite_compressed_traffic                      |        global        |                                                                                 inbound, outbound                                                                                  |      bytes/s      |
-| ad.dra_replication_intrasite_compressed_traffic                      |        global        |                                                                                 inbound, outbound                                                                                  |      bytes/s      |
-| ad.dra_replication_sync_objects_remaining                            |        global        |                                                                                 inbound, outbound                                                                                  |      objects      |
-| ad.dra_replication_objects_filtered                                  |        global        |                                                                                 inbound, outbound                                                                                  |     objects/s     |
-| ad.dra_replication_properties_updated                                |        global        |                                                                                 inbound, outbound                                                                                  |   properties/s    |
-| ad.dra_replication_properties_filtered                               |        global        |                                                                                 inbound, outbound                                                                                  |   properties/s    |
-| ad.dra_replication_pending_syncs                                     |        global        |                                                                                      pending                                                                                       |       syncs       |
-| ad.dra_replication_sync_requests                                     |        global        |                                                                                      requests                                                                                      |    requests/s     |
-| ad.ds_threads                                                        |        global        |                                                                                       in_use                                                                                       |      threads      |
-| ad.ldap_last_bind_time                                               |        global        |                                                                                     last_bind                                                                                      |      seconds      |
-| ad.binds                                                             |        global        |                                                                                       binds                                                                                        |      binds/s      |
-| ad.ldap_searches                                                     |        global        |                                                                                      searches                                                                                      |    searches/s     |
-| adcs.cert_template_requests                                          | certificate template |                                                                                      requests                                                                                      |    requests/s     |
-| adcs.cert_template_failed_requests                                   | certificate template |                                                                                       failed                                                                                       |    requests/s     |
-| adcs.cert_template_issued_requests                                   | certificate template |                                                                                       issued                                                                                       |    requests/s     |
-| adcs.cert_template_pending_requests                                  | certificate template |                                                                                      pending                                                                                       |    requests/s     |
-| adcs.cert_template_request_processing_time                           | certificate template |                                                                                  processing_time                                                                                   |      seconds      |
-| adcs.cert_template_retrievals                                        | certificate template |                                                                                     retrievals                                                                                     |   retrievals/s    |
-| adcs.cert_template_retrieval_processing_time                         | certificate template |                                                                                  processing_time                                                                                   |      seconds      |
-| adcs.cert_template_request_cryptographic_signing_time                | certificate template |                                                                                    singing_time                                                                                    |      seconds      |
-| adcs.cert_template_request_policy_module_processing                  | certificate template |                                                                                  processing_time                                                                                   |      seconds      |
-| adcs.cert_template_challenge_responses                               | certificate template |                                                                                     challenge                                                                                      |    responses/s    |
-| adcs.cert_template_challenge_response_processing_time                | certificate template |                                                                                  processing_time                                                                                   |      seconds      |
-| adcs.cert_template_signed_certificate_timestamp_lists                | certificate template |                                                                                     processed                                                                                      |      lists/s      |
-| adcs.cert_template_signed_certificate_timestamp_list_processing_time | certificate template |                                                                                  processing_time                                                                                   |      seconds      |
-| adfs.ad_login_connection_failures                                    |        global        |                                                                                     connection                                                                                     |    failures/s     |
-| adfs.certificate_authentications                                     |        global        |                                                                                  authentications                                                                                   | authentications/s |
-| adfs.db_artifact_failures                                            |        global        |                                                                                     connection                                                                                     |    failures/s     |
-| adfs.db_artifact_query_time_seconds                                  |        global        |                                                                                     query_time                                                                                     |     seconds/s     |
-| adfs.db_config_failures                                              |        global        |                                                                                     connection                                                                                     |    failures/s     |
-| adfs.db_config_query_time_seconds                                    |        global        |                                                                                     query_time                                                                                     |     seconds/s     |
-| adfs.device_authentications                                          |        global        |                                                                                  authentications                                                                                   | authentications/s |
-| adfs.external_authentications                                        |        global        |                                                                                  success, failure                                                                                  | authentications/s |
-| adfs.federated_authentications                                       |        global        |                                                                                  authentications                                                                                   | authentications/s |
-| adfs.federation_metadata_requests                                    |        global        |                                                                                      requests                                                                                      |    requests/s     |
-| adfs.oauth_authorization_requests                                    |        global        |                                                                                      requests                                                                                      |    requests/s     |
-| adfs.oauth_client_authentications                                    |        global        |                                                                                  success, failure                                                                                  | authentications/s |
-| adfs.oauth_client_credentials_requests                               |        global        |                                                                                  success, failure                                                                                  |    requests/s     |
-| adfs.oauth_client_privkey_jwt_authentications                        |        global        |                                                                                  success, failure                                                                                  | authentications/s |
-| adfs.oauth_client_secret_basic_authentications                       |        global        |                                                                                  success, failure                                                                                  | authentications/s |
-| adfs.oauth_client_secret_post_authentications                        |        global        |                                                                                  success, failure                                                                                  | authentications/s |
-| adfs.oauth_client_windows_authentications                            |        global        |                                                                                  success, failure                                                                                  | authentications/s |
-| adfs.oauth_logon_certificate_requests                                |        global        |                                                                                  success, failure                                                                                  |    requests/s     |
-| adfs.oauth_password_grant_requests                                   |        global        |                                                                                  success, failure                                                                                  |    requests/s     |
-| adfs.oauth_token_requests_success                                    |        global        |                                                                                      success                                                                                       |    requests/s     |
-| adfs.passive_requests                                                |        global        |                                                                                      passive                                                                                       |    requests/s     |
-| adfs.passport_authentications                                        |        global        |                                                                                      passport                                                                                      | authentications/s |
-| adfs.password_change_requests                                        |        global        |                                                                                  success, failure                                                                                  |    requests/s     |
-| adfs.samlp_token_requests_success                                    |        global        |                                                                                      success                                                                                       |    requests/s     |
-| adfs.sso_authentications                                             |        global        |                                                                                  success, failure                                                                                  | authentications/s |
-| adfs.token_requests                                                  |        global        |                                                                                      requests                                                                                      |    requests/s     |
-| adfs.userpassword_authentications                                    |        global        |                                                                                  success, failure                                                                                  | authentications/s |
-| adfs.windows_integrated_authentications                              |        global        |                                                                                  authentications                                                                                   | authentications/s |
-| adfs.wsfed_token_requests_success                                    |        global        |                                                                                      success                                                                                       |    requests/s     |
-| adfs.wstrust_token_requests_success                                  |        global        |                                                                                      success                                                                                       |    requests/s     |
-| netframework.clrexception_thrown                                     |       process        |                                                                                     exceptions                                                                                     |   exceptions/s    |
-| netframework.clrexception_filters                                    |       process        |                                                                                      filters                                                                                       |     filters/s     |
-| netframework.clrexception_finallys                                   |       process        |                                                                                      finallys                                                                                      |    finallys/s     |
-| netframework.clrexception_throw_to_catch_depth                       |       process        |                                                                                     traversed                                                                                      |  stack_frames/s   |
-| netframework.clrinterop_com_callable_wrappers                        |       process        |                                                                               com_callable_wrappers                                                                                |       ccw/s       |
-| netframework.clrinterop_interop_marshallings                         |       process        |                                                                                    marshallings                                                                                    |  marshallings/s   |
-| netframework.clrinterop_interop_stubs_created                        |       process        |                                                                                      created                                                                                       |      stubs/s      |
-| netframework.clrjit_methods                                          |       process        |                                                                                    jit-compiled                                                                                    |     methods/s     |
-| netframework.clrjit_time                                             |       process        |                                                                                        time                                                                                        |    percentage     |
-| netframework.clrjit_standard_failures                                |       process        |                                                                                      failures                                                                                      |    failures/s     |
-| netframework.clrjit_il_bytes                                         |       process        |                                                                                   compiled_msil                                                                                    |      bytes/s      |
-| netframework.clrloading_loader_heap_size                             |       process        |                                                                                     committed                                                                                      |       bytes       |
-| netframework.clrloading_appdomains_loaded                            |       process        |                                                                                       loaded                                                                                       |     domain/s      |
-| netframework.clrloading_appdomains_unloaded                          |       process        |                                                                                      unloaded                                                                                      |     domain/s      |
-| netframework.clrloading_assemblies_loaded                            |       process        |                                                                                       loaded                                                                                       |   assemblies/s    |
-| netframework.clrloading_classes_loaded                               |       process        |                                                                                       loaded                                                                                       |     classes/s     |
-| netframework.clrloading_class_load_failures                          |       process        |                                                                                     class_load                                                                                     |    failures/s     |
-| netframework.clrlocksandthreads_queue_length                         |       process        |                                                                                      threads                                                                                       |     threads/s     |
-| netframework.clrlocksandthreads_current_logical_threads              |       process        |                                                                                      logical                                                                                       |      threads      |
-| netframework.clrlocksandthreads_current_physical_threads             |       process        |                                                                                      physical                                                                                      |      threads      |
-| netframework.clrlocksandthreads_recognized_threads                   |       process        |                                                                                      threads                                                                                       |     threads/s     |
-| netframework.clrlocksandthreads_contentions                          |       process        |                                                                                    contentions                                                                                     |   contentions/s   |
-| netframework.clrmemory_allocated_bytes                               |       process        |                                                                                     allocated                                                                                      |      bytes/s      |
-| netframework.clrmemory_finalization_survivors                        |       process        |                                                                                      survived                                                                                      |      objects      |
-| netframework.clrmemory_heap_size                                     |       process        |                                                                                        heap                                                                                        |       bytes       |
-| netframework.clrmemory_promoted                                      |       process        |                                                                                      promoted                                                                                      |       bytes       |
-| netframework.clrmemory_number_gc_handles                             |       process        |                                                                                        used                                                                                        |      handles      |
-| netframework.clrmemory_collections                                   |       process        |                                                                                         gc                                                                                         |       gc/s        |
-| netframework.clrmemory_induced_gc                                    |       process        |                                                                                         gc                                                                                         |       gc/s        |
-| netframework.clrmemory_number_pinned_objects                         |       process        |                                                                                       pinned                                                                                       |      objects      |
-| netframework.clrmemory_number_sink_blocks_in_use                     |       process        |                                                                                        used                                                                                        |      blocks       |
-| netframework.clrmemory_committed                                     |       process        |                                                                                     committed                                                                                      |       bytes       |
-| netframework.clrmemory_reserved                                      |       process        |                                                                                      reserved                                                                                      |       bytes       |
-| netframework.clrmemory_gc_time                                       |       process        |                                                                                        time                                                                                        |    percentage     |
-| netframework.clrremoting_channels                                    |       process        |                                                                                     registered                                                                                     |    channels/s     |
-| netframework.clrremoting_context_bound_classes_loaded                |       process        |                                                                                       loaded                                                                                       |      classes      |
-| netframework.clrremoting_context_bound_objects                       |       process        |                                                                                     allocated                                                                                      |     objects/s     |
-| netframework.clrremoting_context_proxies                             |       process        |                                                                                      objects                                                                                       |     objects/s     |
-| netframework.clrremoting_contexts                                    |       process        |                                                                                      contexts                                                                                      |     contexts      |
-| netframework.clrremoting_remote_calls                                |       process        |                                                                                        rpc                                                                                         |      calls/s      |
-| netframework.clrsecurity_link_time_checks                            |       process        |                                                                                      linktime                                                                                      |     checks/s      |
-| netframework.clrsecurity_checks_time                                 |       process        |                                                                                        time                                                                                        |    percentage     |
-| netframework.clrsecurity_stack_walk_depth                            |       process        |                                                                                       stack                                                                                        |       depth       |
-| netframework.clrsecurity_runtime_checks                              |       process        |                                                                                      runtime                                                                                       |     checks/s      |
-| exchange.activesync_ping_cmds_pending                                |        global        |                                                                                      pending                                                                                       |     commands      |
-| exchange.activesync_requests                                         |        global        |                                                                                      received                                                                                      |    requests/s     |
-| exchange.activesync_sync_cmds                                        |        global        |                                                                                     processed                                                                                      |    commands/s     |
-| exchange.autodiscover_requests                                       |        global        |                                                                                     processed                                                                                      |    requests/s     |
-| exchange.avail_service_requests                                      |        global        |                                                                                      serviced                                                                                      |    requests/s     |
-| exchange.owa_current_unique_users                                    |        global        |                                                                                     logged-in                                                                                      |       users       |
-| exchange.owa_requests_total                                          |        global        |                                                                                      handled                                                                                       |    requests/s     |
-| exchange.rpc_active_user_count                                       |        global        |                                                                                       active                                                                                       |       users       |
-| exchange.rpc_avg_latency                                             |        global        |                                                                                      latency                                                                                       |      seconds      |
-| exchange.rpc_connection_count                                        |        global        |                                                                                    connections                                                                                     |    connections    |
-| exchange.rpc_operations                                              |        global        |                                                                                     operations                                                                                     |   operations/s    |
-| exchange.rpc_requests                                                |        global        |                                                                                     processed                                                                                      |     requests      |
-| exchange.rpc_user_count                                              |        global        |                                                                                       users                                                                                        |       users       |
-| exchange.transport_queues_active_mail_box_delivery                   |        global        |                                                                               low, high,none,normal                                                                                |    messages/s     |
-| exchange.transport_queues_external_active_remote_delivery            |        global        |                                                                               low, high,none,normal                                                                                |    messages/s     |
-| exchange.transport_queues_external_largest_delivery                  |        global        |                                                                               low, high,none,normal                                                                                |    messages/s     |
-| exchange.transport_queues_internal_active_remote_delivery            |        global        |                                                                               low, high,none,normal                                                                                |    messages/s     |
-| exchange.transport_queues_internal_largest_delivery                  |        global        |                                                                               low, high,none,normal                                                                                |    messages/s     |
-| exchange.transport_queues_retry_mailbox_delivery                     |        global        |                                                                               low, high,none,normal                                                                                |    messages/s     |
-| exchange.transport_queues_poison                                     |        global        |                                                                               low, high,none,normal                                                                                |    messages/s     |
-| exchange.workload_active_tasks                                       |  exchange workload   |                                                                                       active                                                                                       |       tasks       |
-| exchange.workload_completed_tasks                                    |  exchange workload   |                                                                                     completed                                                                                      |      tasks/s      |
-| exchange.workload_queued_tasks                                       |  exchange workload   |                                                                                       queued                                                                                       |      tasks/s      |
-| exchange.workload_yielded_tasks                                      |  exchange workload   |                                                                                      yielded                                                                                       |      tasks/s      |
-| exchange.workload_activity_status                                    |  exchange workload   |                                                                                   active, paused                                                                                   |      status       |
-| exchange.ldap_long_running_ops_per_sec                               |     ldap process     |                                                                                    long-running                                                                                    |   operations/s    |
-| exchange.ldap_read_time                                              |     ldap process     |                                                                                        read                                                                                        |      seconds      |
-| exchange.ldap_search_time                                            |     ldap process     |                                                                                       search                                                                                       |      seconds      |
-| exchange.ldap_write_time                                             |     ldap process     |                                                                                       write                                                                                        |      seconds      |
-| exchange.ldap_timeout_errors                                         |     ldap process     |                                                                                      timeout                                                                                       |     errors/s      |
-| exchange.http_proxy_avg_auth_latency                                 |      http proxy      |                                                                                      latency                                                                                       |      seconds      |
-| exchange.http_proxy_avg_cas_processing_latency_sec                   |      http proxy      |                                                                                      latency                                                                                       |      seconds      |
-| exchange.http_proxy_mailbox_proxy_failure_rate                       |      http proxy      |                                                                                      failures                                                                                      |    percentage     |
-| exchange.http_proxy_mailbox_server_locator_avg_latency_sec           |      http proxy      |                                                                                      latency                                                                                       |      seconds      |
-| exchange.http_proxy_outstanding_proxy_requests                       |      http proxy      |                                                                                    outstanding                                                                                     |     requests      |
-| hyperv.vms_health                                                    |                      |                                                                                    ok, critical                                                                                    |        vms        |
-| hyperv.root_partition_device_space_pages                             |                      |                                                                                     4K, 2M, 1G                                                                                     |       pages       |
-| hyperv.root_partition_gpa_space_pages                                |                      |                                                                                     4K, 2M, 1G                                                                                     |       pages       |
-| hyperv.root_partition_gpa_space_modifications                        |                      |                                                                                        gpa                                                                                         |  modifications/s  |
-| hyperv.root_partition_attached_devices                               |                      |                                                                                      attached                                                                                      |      devices      |
-| hyperv.root_partition_deposited_pages                                |                      |                                                                                     deposited                                                                                      |       pages       |
-| hyperv.root_partition_skipped_interrupts                             |                      |                                                                                      skipped                                                                                       |    interrupts     |
-| hyperv.root_partition_device_dma_errors                              |                      |                                                                                      skipped                                                                                       |     requests      |
-| hyperv.root_partition_device_interrupt_errors                        |                      |                                                                                 illegal_interrupt                                                                                  |     requests      |
-| hyperv.root_partition_device_interrupt_throttle_events               |                      |                                                                                     throttling                                                                                     |      events       |
-| hyperv.root_partition_io_tlb_flush                                   |                      |                                                                                      flushes                                                                                       |     flushes/s     |
-| hyperv.root_partition_address_space                                  |                      |                                                                                   address_spaces                                                                                   |  address spaces   |
-| hyperv.root_partition_virtual_tlb_flush_entries                      |                      |                                                                                      flushes                                                                                       |     flushes/s     |
-| hyperv.root_partition_virtual_tlb_pages                              |                      |                                                                                        used                                                                                        |       pages       |
-| hyperv.vm_cpu_usage                                                  |          vm          |                                                                             guest, hypervisor, remote                                                                              |    percentage     |
-| hyperv.vm_memory_physical                                            |          vm          |                                                                                  assigned_memory                                                                                   |        MiB        |
-| hyperv.vm_memory_physical_guest_visible                              |          vm          |                                                                                   visible_memory                                                                                   |        MiB        |
-| hyperv.vm_memory_pressure_current                                    |          vm          |                                                                                      pressure                                                                                      |    percentage     |
-| hyperv.vm_vid_physical_pages_allocated                               |          vm          |                                                                                     allocated                                                                                      |       pages       |
-| hyperv.vm_vid_remote_physical_pages                                  |          vm          |                                                                                  remote_physical                                                                                   |       pages       |
-| hyperv.vm_device_bytes                                               |      vm device       |                                                                                   read, written                                                                                    |      bytes/s      |
-| hyperv.vm_device_operations                                          |      vm device       |                                                                                    read, write                                                                                     |   operations/s    |
-| hyperv.vm_device_errors                                              |      vm device       |                                                                                       errors                                                                                       |     errors/s      |
-| hyperv.vm_interface_bytes                                            |     vm interface     |                                                                                   received, sent                                                                                   |      bytes/s      |
-| hyperv.vm_interface_packets                                          |     vm interface     |                                                                                   received, sent                                                                                   |     packets/s     |
-| hyperv.vm_interface_packets_dropped                                  |     vm interface     |                                                                                 incoming, outgoing                                                                                 |      drops/s      |
-| hyperv.vswitch_bytes                                                 |       vswitch        |                                                                                   received, sent                                                                                   |      bytes/s      |
-| hyperv.vswitch_packets                                               |       vswitch        |                                                                                   received, sent                                                                                   |     packets/s     |
-| hyperv.vswitch_directed_packets                                      |       vswitch        |                                                                                   received, sent                                                                                   |     packets/s     |
-| hyperv.vswitch_broadcast_packets                                     |       vswitch        |                                                                                   received, sent                                                                                   |     packets/s     |
-| hyperv.vswitch_multicast_packets                                     |       vswitch        |                                                                                   received, sent                                                                                   |     packets/s     |
-| hyperv.vswitch_dropped_packets                                       |       vswitch        |                                                                                 incoming, outgoing                                                                                 |      drops/s      |
-| hyperv.vswitch_extensions_dropped_packets                            |       vswitch        |                                                                                 incoming, outgoing                                                                                 |      drops/s      |
-| hyperv.vswitch_packets_flooded                                       |       vswitch        |                                                                                      flooded                                                                                       |     packets/s     |
-| hyperv.vswitch_learned_mac_addresses                                 |       vswitch        |                                                                                      learned                                                                                       |  mac addresses/s  |
-| hyperv.vswitch_purged_mac_addresses                                  |       vswitch        |                                                                                       purged                                                                                       |  mac addresses/s  |
+Labels:
 
-## Configuration
+| Label      | Description     |
+|:-----------|:----------------|
+| nic | TBD |
 
-Edit the `go.d/windows.conf` configuration file using `edit-config` from the
-Netdata [config directory](/docs/configuring/configuration#the-netdata-config-directory),
-which is typically at `/etc/netdata`.
+Metrics:
+
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| windows.net_nic_bandwidth | received, sent | kilobits/s |
+| windows.net_nic_packets | received, sent | packets/s |
+| windows.net_nic_errors | inbound, outbound | errors/s |
+| windows.net_nic_discarded | inbound, outbound | discards/s |
+
+### Per thermalzone
+
+TBD
+
+Labels:
+
+| Label      | Description     |
+|:-----------|:----------------|
+| thermalzone | TBD |
+
+Metrics:
+
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| windows.thermalzone_temperature | temperature | celsius |
+
+### Per service
+
+TBD
+
+Labels:
+
+| Label      | Description     |
+|:-----------|:----------------|
+| service | TBD |
+
+Metrics:
+
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| windows.service_state | running, stopped, start_pending, stop_pending, continue_pending, pause_pending, paused, unknown | state |
+| windows.service_status | ok, error, unknown, degraded, pred_fail, starting, stopping, service, stressed, nonrecover, no_contact, lost_comm | status |
+
+### Per website
+
+TBD
+
+Labels:
+
+| Label      | Description     |
+|:-----------|:----------------|
+| website | TBD |
+
+Metrics:
+
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| iis.website_traffic | received, sent | bytes/s |
+| iis.website_requests_rate | requests | requests/s |
+| iis.website_active_connections_count | active | connections |
+| iis.website_users_count | anonymous, non_anonymous | users |
+| iis.website_connection_attempts_rate | connection | attempts/s |
+| iis.website_isapi_extension_requests_count | isapi | requests |
+| iis.website_isapi_extension_requests_rate | isapi | requests/s |
+| iis.website_ftp_file_transfer_rate | received, sent | files/s |
+| iis.website_logon_attempts_rate | logon | attempts/s |
+| iis.website_errors_rate | document_locked, document_not_found | errors/s |
+| iis.website_uptime | document_locked, document_not_found | seconds |
+
+### Per mssql instance
+
+TBD
+
+Labels:
+
+| Label      | Description     |
+|:-----------|:----------------|
+| mssql_instance | TBD |
+
+Metrics:
+
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| mssql.instance_accessmethods_page_splits | page | splits/s |
+| mssql.instance_cache_hit_ratio | hit_ratio | percentage |
+| mssql.instance_bufman_checkpoint_pages | flushed | pages/s |
+| mssql.instance_bufman_page_life_expectancy | life_expectancy | seconds |
+| mssql.instance_bufman_iops | read, written | iops |
+| mssql.instance_blocked_processes | blocked | processes |
+| mssql.instance_user_connection | user | connections |
+| mssql.instance_locks_lock_wait | alloc_unit, application, database, extent, file, hobt, key, metadata, oib, object, page, rid, row_group, xact | locks/s |
+| mssql.instance_locks_deadlocks | alloc_unit, application, database, extent, file, hobt, key, metadata, oib, object, page, rid, row_group, xact | locks/s |
+| mssql.instance_memmgr_connection_memory_bytes | memory | bytes |
+| mssql.instance_memmgr_external_benefit_of_memory | benefit | bytes |
+| mssql.instance_memmgr_pending_memory_grants | pending | processes |
+| mssql.instance_memmgr_server_memory | memory | bytes |
+| mssql.instance_sql_errors | db_offline, info, kill_connection, user | errors |
+| mssql.instance_sqlstats_auto_parameterization_attempts | failed | attempts/s |
+| mssql.instance_sqlstats_batch_requests | batch | requests/s |
+| mssql.instance_sqlstats_safe_auto_parameterization_attempts | safe | attempts/s |
+| mssql.instance_sqlstats_sql_compilations | compilations | compilations/s |
+| mssql.instance_sqlstats_sql_recompilations | recompiles | recompiles/s |
+
+### Per database
+
+TBD
+
+Labels:
+
+| Label      | Description     |
+|:-----------|:----------------|
+| mssql_instance | TBD |
+| database | TBD |
+
+Metrics:
+
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| mssql.database_active_transactions | active | transactions |
+| mssql.database_backup_restore_operations | backup | operations/s |
+| mssql.database_data_files_size | size | bytes |
+| mssql.database_log_flushed | flushed | bytes/s |
+| mssql.database_log_flushes | log | flushes/s |
+| mssql.database_transactions | transactions | transactions/s |
+| mssql.database_write_transactions | write | transactions/s |
+
+### Per certificate template
+
+TBD
+
+Labels:
+
+| Label      | Description     |
+|:-----------|:----------------|
+| cert_template | TBD |
+
+Metrics:
+
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| adcs.cert_template_requests | requests | requests/s |
+| adcs.cert_template_failed_requests | failed | requests/s |
+| adcs.cert_template_issued_requests | issued | requests/s |
+| adcs.cert_template_pending_requests | pending | requests/s |
+| adcs.cert_template_request_processing_time | processing_time | seconds |
+| adcs.cert_template_retrievals | retrievals | retrievals/s |
+| adcs.cert_template_retrieval_processing_time | processing_time | seconds |
+| adcs.cert_template_request_cryptographic_signing_time | singing_time | seconds |
+| adcs.cert_template_request_policy_module_processing | processing_time | seconds |
+| adcs.cert_template_challenge_responses | challenge | responses/s |
+| adcs.cert_template_challenge_response_processing_time | processing_time | seconds |
+| adcs.cert_template_signed_certificate_timestamp_lists | processed | lists/s |
+| adcs.cert_template_signed_certificate_timestamp_list_processing_time | processing_time | seconds |
+
+### Per process
+
+TBD
+
+Labels:
+
+| Label      | Description     |
+|:-----------|:----------------|
+| process | TBD |
+
+Metrics:
+
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| netframework.clrexception_thrown | exceptions | exceptions/s |
+| netframework.clrexception_filters | filters | filters/s |
+| netframework.clrexception_finallys | finallys | finallys/s |
+| netframework.clrexception_throw_to_catch_depth | traversed | stack_frames/s |
+| netframework.clrinterop_com_callable_wrappers | com_callable_wrappers | ccw/s |
+| netframework.clrinterop_interop_marshallings | marshallings | marshallings/s |
+| netframework.clrinterop_interop_stubs_created | created | stubs/s |
+| netframework.clrjit_methods | jit-compiled | methods/s |
+| netframework.clrjit_time | time | percentage |
+| netframework.clrjit_standard_failures | failures | failures/s |
+| netframework.clrjit_il_bytes | compiled_msil | bytes/s |
+| netframework.clrloading_loader_heap_size | committed | bytes |
+| netframework.clrloading_appdomains_loaded | loaded | domain/s |
+| netframework.clrloading_appdomains_unloaded | unloaded | domain/s |
+| netframework.clrloading_assemblies_loaded | loaded | assemblies/s |
+| netframework.clrloading_classes_loaded | loaded | classes/s |
+| netframework.clrloading_class_load_failures | class_load | failures/s |
+| netframework.clrlocksandthreads_queue_length | threads | threads/s |
+| netframework.clrlocksandthreads_current_logical_threads | logical | threads |
+| netframework.clrlocksandthreads_current_physical_threads | physical | threads |
+| netframework.clrlocksandthreads_recognized_threads | threads | threads/s |
+| netframework.clrlocksandthreads_contentions | contentions | contentions/s |
+| netframework.clrmemory_allocated_bytes | allocated | bytes/s |
+| netframework.clrmemory_finalization_survivors | survived | objects |
+| netframework.clrmemory_heap_size | heap | bytes |
+| netframework.clrmemory_promoted | promoted | bytes |
+| netframework.clrmemory_number_gc_handles | used | handles |
+| netframework.clrmemory_collections | gc | gc/s |
+| netframework.clrmemory_induced_gc | gc | gc/s |
+| netframework.clrmemory_number_pinned_objects | pinned | objects |
+| netframework.clrmemory_number_sink_blocks_in_use | used | blocks |
+| netframework.clrmemory_committed | committed | bytes |
+| netframework.clrmemory_reserved | reserved | bytes |
+| netframework.clrmemory_gc_time | time | percentage |
+| netframework.clrremoting_channels | registered | channels/s |
+| netframework.clrremoting_context_bound_classes_loaded | loaded | classes |
+| netframework.clrremoting_context_bound_objects | allocated | objects/s |
+| netframework.clrremoting_context_proxies | objects | objects/s |
+| netframework.clrremoting_contexts | contexts | contexts |
+| netframework.clrremoting_remote_calls | rpc | calls/s |
+| netframework.clrsecurity_link_time_checks | linktime | checks/s |
+| netframework.clrsecurity_checks_time | time | percentage |
+| netframework.clrsecurity_stack_walk_depth | stack | depth |
+| netframework.clrsecurity_runtime_checks | runtime | checks/s |
+
+### Per exchange workload
+
+TBD
+
+Labels:
+
+| Label      | Description     |
+|:-----------|:----------------|
+| workload | TBD |
+
+Metrics:
+
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| exchange.workload_active_tasks | active | tasks |
+| exchange.workload_completed_tasks | completed | tasks/s |
+| exchange.workload_queued_tasks | queued | tasks/s |
+| exchange.workload_yielded_tasks | yielded | tasks/s |
+| exchange.workload_activity_status | active, paused | status |
+
+### Per ldap process
+
+TBD
+
+Labels:
+
+| Label      | Description     |
+|:-----------|:----------------|
+| workload | TBD |
+
+Metrics:
+
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| exchange.ldap_long_running_ops_per_sec | long-running | operations/s |
+| exchange.ldap_read_time | read | seconds |
+| exchange.ldap_search_time | search | seconds |
+| exchange.ldap_write_time | write | seconds |
+| exchange.ldap_timeout_errors | timeout | errors/s |
+
+### Per http proxy
+
+TBD
+
+Labels:
+
+| Label      | Description     |
+|:-----------|:----------------|
+| workload | TBD |
+
+Metrics:
+
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| exchange.http_proxy_avg_auth_latency | latency | seconds |
+| exchange.http_proxy_avg_cas_processing_latency_sec | latency | seconds |
+| exchange.http_proxy_mailbox_proxy_failure_rate | failures | percentage |
+| exchange.http_proxy_mailbox_server_locator_avg_latency_sec | latency | seconds |
+| exchange.http_proxy_outstanding_proxy_requests | outstanding | requests |
+| exchange.http_proxy_requests | processed | requests/s |
+
+### Per vm
+
+TBD
+
+Labels:
+
+| Label      | Description     |
+|:-----------|:----------------|
+| vm_name | TBD |
+
+Metrics:
+
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| hyperv.vm_cpu_usage | gues, hypervisor, remote | percentage |
+| hyperv.vm_memory_physical | assigned_memory | MiB |
+| hyperv.vm_memory_physical_guest_visible | visible_memory | MiB |
+| hyperv.vm_memory_pressure_current | pressure | percentage |
+| hyperv.vm_vid_physical_pages_allocated | allocated | pages |
+| hyperv.vm_vid_remote_physical_pages | remote_physical | pages |
+
+### Per vm device
+
+TBD
+
+Labels:
+
+| Label      | Description     |
+|:-----------|:----------------|
+| vm_device | TBD |
+
+Metrics:
+
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| hyperv.vm_device_bytes | read, written | bytes/s |
+| hyperv.vm_device_operations | read, write | operations/s |
+| hyperv.vm_device_errors | errors | errors/s |
+
+### Per vm interface
+
+TBD
+
+Labels:
+
+| Label      | Description     |
+|:-----------|:----------------|
+| vm_interface | TBD |
+
+Metrics:
+
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| hyperv.vm_interface_bytes | received, sent | bytes/s |
+| hyperv.vm_interface_packets | received, sent | packets/s |
+| hyperv.vm_interface_packets_dropped | incoming, outgoing | drops/s |
+
+### Per vswitch
+
+TBD
+
+Labels:
+
+| Label      | Description     |
+|:-----------|:----------------|
+| vswitch | TBD |
+
+Metrics:
+
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| hyperv.vswitch_bytes | received, sent | bytes/s |
+| hyperv.vswitch_packets | received, sent | packets/s |
+| hyperv.vswitch_directed_packets | received, sent | packets/s |
+| hyperv.vswitch_broadcast_packets | received, sent | packets/s |
+| hyperv.vswitch_multicast_packets | received, sent | packets/s |
+| hyperv.vswitch_dropped_packets | incoming, outgoing | drops/s |
+| hyperv.vswitch_extensions_dropped_packets | incoming, outgoing | drops/s |
+| hyperv.vswitch_packets_flooded | flooded | packets/s |
+| hyperv.vswitch_learned_mac_addresses | learned | mac addresses/s |
+| hyperv.vswitch_purged_mac_addresses | purged | mac addresses/s |
+
+
+
+## Alerts
+
+
+The following alerts are available:
+
+| Alert name  | On metric | Description |
+|:------------|:----------|:------------|
+| [ windows_10min_cpu_usage ](https://github.com/netdata/netdata/blob/master/health/health.d/windows.conf) | windows.cpu_utilization_total | average CPU utilization over the last 10 minutes |
+| [ windows_ram_in_use ](https://github.com/netdata/netdata/blob/master/health/health.d/windows.conf) | windows.memory_utilization | memory utilization |
+| [ windows_inbound_packets_discarded ](https://github.com/netdata/netdata/blob/master/health/health.d/windows.conf) | windows.net_nic_discarded | number of inbound discarded packets for the network interface in the last 10 minutes |
+| [ windows_outbound_packets_discarded ](https://github.com/netdata/netdata/blob/master/health/health.d/windows.conf) | windows.net_nic_discarded | number of outbound discarded packets for the network interface in the last 10 minutes |
+| [ windows_inbound_packets_errors ](https://github.com/netdata/netdata/blob/master/health/health.d/windows.conf) | windows.net_nic_errors | number of inbound errors for the network interface in the last 10 minutes |
+| [ windows_outbound_packets_errors ](https://github.com/netdata/netdata/blob/master/health/health.d/windows.conf) | windows.net_nic_errors | number of outbound errors for the network interface in the last 10 minutes |
+| [ windows_disk_in_use ](https://github.com/netdata/netdata/blob/master/health/health.d/windows.conf) | windows.logical_disk_space_usage | disk space utilization |
+
+
+## Setup
+
+### Prerequisites
+
+#### Install Windows exporter
+
+To install the Windows exporter, follow the [official installation guide](https://github.com/prometheus-community/windows_exporter#installation).
+
+
+
+### Configuration
+
+#### File
+
+The configuration file name for this integration is `go.d/windows.conf`.
+
+
+You can edit the configuration file using the `edit-config` script from the
+Netdata [config directory](/docs/configuring/configuration#the-netdata-config-directory).
 
 ```bash
-cd /etc/netdata # Replace this path with your Netdata config directory
+cd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata
 sudo ./edit-config go.d/windows.conf
 ```
+#### Options
 
-Needs only `url` to `windows_exporter` metrics endpoint. Here is an example for 2 instances:
+The following options can be defined globally: update_every, autodetection_retry.
+
+
+<details><summary>Config options</summary>
+
+| Name | Description | Default | Required |
+|:----|:-----------|:-------|:--------:|
+| update_every | Data collection frequency. | 1 | False |
+| autodetection_retry | Recheck interval in seconds. Zero means no recheck will be scheduled. | 0 | False |
+| url | Server URL. |  | True |
+| timeout | HTTP request timeout. | 1 | False |
+| username | Username for basic HTTP authentication. |  | False |
+| password | Password for basic HTTP authentication. |  | False |
+| proxy_url | Proxy URL. |  | False |
+| proxy_username | Username for proxy basic HTTP authentication. |  | False |
+| proxy_password | Password for proxy basic HTTP authentication. |  | False |
+| method | HTTP request method. | GET | False |
+| body | HTTP request body. |  | False |
+| headers | HTTP request headers. |  | False |
+| not_follow_redirects | Redirect handling policy. Controls whether the client follows redirects. | no | False |
+| tls_skip_verify | Server certificate chain and hostname validation policy. Controls whether the client performs this check. | no | False |
+| tls_ca | Certification authority that the client uses when verifying the server's certificates. |  | False |
+| tls_cert | Client TLS certificate. |  | False |
+| tls_key | Client TLS key. |  | False |
+
+</details>
+
+#### Examples
+
+##### Basic
+
+A basic example configuration.
+
+```yaml
+jobs:
+  - name: win_server
+    url: http://192.0.2.1:9182/metrics
+
+```
+##### HTTP authentication
+
+Basic HTTP authentication.
+
+<details><summary>Config</summary>
+
+```yaml
+jobs:
+  - name: win_server
+    url: http://192.0.2.1:9182/metrics
+    username: username
+    password: password
+
+```
+</details>
+
+##### HTTPS with self-signed certificate
+
+Do not validate server certificate chain and hostname.
+
+<details><summary>Config</summary>
+
+```yaml
+jobs:
+  - name: win_server
+    url: https://192.0.2.1:9182/metrics
+    tls_skip_verify: yes
+
+```
+</details>
+
+##### Virtual Node
+
+The Virtual Node functionality allows you to define nodes in configuration files and treat them as ordinary nodes in all interfaces, panels, tabs, filters, etc.
+You can create a virtual node for all your Windows machines and control them as separate entities.
+
+To make your Windows server a virtual node, you need to define virtual nodes in `/etc/netdata/vnodes/vnodes.conf`:
+
+> **Note**: To create a valid guid, you can use the `uuidgen` command on Linux, or the `[guid]::NewGuid()` command in PowerShell on Windows.
+
+```yaml
+# /etc/netdata/vnodes/vnodes.conf
+- hostname: win_server
+  guid: <value>
+```
+
+
+<details><summary>Config</summary>
+
+```yaml
+jobs:
+  - name: win_server
+    vnode: win_server
+    url: http://192.0.2.1:9182/metrics
+
+```
+</details>
+
+##### Multi-instance
+
+> **Note**: When you define multiple jobs, their names must be unique.
+
+Collecting metrics from multiple remote instances.
+
+
+<details><summary>Config</summary>
 
 ```yaml
 jobs:
   - name: win_server1
-    url: http://203.0.113.10:9182/metrics
+    url: http://192.0.2.1:9182/metrics
 
   - name: win_server2
-    url: http://203.0.113.11:9182/metrics
+    url: http://192.0.2.2:9182/metrics
+
 ```
+</details>
 
-Hint: Use friendly server names for job names, as these will appear as "instances" in Netdata Cloud charts
-and on the right side menu of the agent UI charts.
 
-For all available options please see
-module [configuration file](https://github.com/netdata/go.d.plugin/blob/master/config/go.d/windows.conf).
-
-### Virtual Nodes
-
-Netdata’s new virtual nodes functionality allows you to define nodes in configuration files and have them be treated as
-regular nodes in all the UI, dashboards, tabs, filters etc. For example, you can create a virtual node each for all
-your Windows machines and monitor them as discrete entities. Virtual nodes can help you simplify your infrastructure
-monitoring and focus on the individual node that matters.
-
-To define your Windows server a virtual node you need to:
-
-* Define virtual nodes in `/etc/netdata/vnodes/vnodes.conf`
-
-  ```yaml
-  - hostname: win_server1
-    guid: <value>
-  ```
-  Just remember to use a valid guid (On Linux you can use `uuidgen` command to generate one, on Windows just use
-  the `[guid]::NewGuid()` command in PowerShell)
-
-* Add the vnode config to the windows monitoring job we created earlier, see higlighted line below:
-  ```yaml
-    jobs:
-      - name: win_server1
-        vnode: win_server1
-        url: http://203.0.113.10:9182/metrics
-  ```
 
 ## Troubleshooting
+
+### Debug Mode
 
 To troubleshoot issues with the `windows` collector, run the `go.d.plugin` with the debug option enabled. The output
 should give you clues as to why the collector isn't working.
@@ -428,4 +705,5 @@ should give you clues as to why the collector isn't working.
   ```bash
   ./go.d.plugin -d -m windows
   ```
+
 

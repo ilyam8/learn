@@ -1,63 +1,37 @@
----
-custom_edit_url: "https://github.com/netdata/go.d.plugin/edit/master/modules/wireguard/README.md"
-sidebar_label: "WireGuard"
-learn_status: "Published"
-toc_max_heading_level: "4"
-learn_rel_path: "Data collection/VPNs"
-description: "Monitor WireGuard VPN network interfaces and peers traffic."
-sidebar_position: "664000"
-slug: "/data-collection/vpns/wireguard"
----
-# WireGuard collector
-
-## Overview
-
-[WireGuard](https://www.wireguard.com/) is an extremely simple yet fast and modern VPN that utilizes state-of-the-art
-cryptography.
-
-This collector monitors WireGuard VPN network interfaces and peers traffic.
-CAP_NET_ADMIN capability is required. It is set automatically during installation.
-
-## Collected metrics
-
-Metrics grouped by *scope*.
-
-The scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.
-
-### device
-
-These metrics refer to the VPN network interface.
-
-Labels:
-
-| Label  | Description           |
-|--------|-----------------------|
+-----------|:----------------|
 | device | VPN network interface |
 
 Metrics:
 
-| Metric                      |    Dimensions     | Unit  |
-|-----------------------------|:-----------------:|:-----:|
-| wireguard.device_network_io | receive, transmit |  B/s  |
-| wireguard.device_peers      |       peers       | peers |
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| wireguard.device_network_io | receive, transmit | B/s |
+| wireguard.device_peers | peers | peers |
 
-### peer
+### Per peer
 
 These metrics refer to the VPN peer.
 
 Labels:
 
-| Label      | Description           |
-|------------|-----------------------|
-| device     | VPN network interface |
-| public_key | Public key of a peer  |
+| Label      | Description     |
+|:-----------|:----------------|
+| device | VPN network interface |
+| public_key | Public key of a peer |
 
 Metrics:
 
-| Metric                              |    Dimensions     |  Unit   |
-|-------------------------------------|:-----------------:|:-------:|
-| wireguard.peer_network_io           | receive, transmit |   B/s   |
-| wireguard.peer_latest_handshake_ago |       time        | seconds |
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| wireguard.peer_network_io | receive, transmit | B/s |
+| wireguard.peer_latest_handshake_ago | time | seconds |
+
+
+
+## Alerts
+
+There are no alerts configured by default for this integration.
+
 
 ## Setup
 
@@ -67,11 +41,40 @@ No action required.
 
 ### Configuration
 
-No configuration required.
+#### File
+
+The configuration file name for this integration is `go.d/wireguard.conf`.
+
+
+You can edit the configuration file using the `edit-config` script from the
+Netdata [config directory](/docs/configuring/configuration#the-netdata-config-directory).
+
+```bash
+cd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata
+sudo ./edit-config go.d/wireguard.conf
+```
+#### Options
+
+The following options can be defined globally: update_every, autodetection_retry.
+
+
+<details><summary>Config options</summary>
+
+| Name | Description | Default | Required |
+|:----|:-----------|:-------|:--------:|
+| update_every | Data collection frequency. | 1 | False |
+| autodetection_retry | Recheck interval in seconds. Zero means no recheck will be scheduled. | 0 | False |
+
+</details>
+
+#### Examples
+There are no configuration examples.
+
+
 
 ## Troubleshooting
 
-### Debug mode
+### Debug Mode
 
 To troubleshoot issues with the `wireguard` collector, run the `go.d.plugin` with the debug option enabled. The output
 should give you clues as to why the collector isn't working.
@@ -94,3 +97,5 @@ should give you clues as to why the collector isn't working.
   ```bash
   ./go.d.plugin -d -m wireguard
   ```
+
+

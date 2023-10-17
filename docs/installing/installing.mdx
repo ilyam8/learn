@@ -14,6 +14,8 @@ import TabItem from '@theme/TabItem';
 
 This document will guide you through installing the open-source Netdata monitoring Agent on Linux, Docker, Kubernetes, and many others, often with one command.
 
+Netdata is very flexible and can be used to monitor all kinds of infrastructure. Read more about possible [Deployment strategies](/docs/architecture/deployment-strategies) to understand what better suites your needs.
+
 ## Get started
 
 Netdata is a free and open-source (FOSS) monitoring agent that collects thousands of hardware and software metrics from
@@ -43,12 +45,6 @@ but we have some hints on what you might want to do next.
 Explore our [general advanced installation options and troubleshooting](#advanced-installation-options-and-troubleshooting), specific options
 for the [single line installer](#install-on-linux-with-one-line-installer), or [other installation methods](#other-installation-methods).
 
-#### Agent user interface
-
-To access the UI provided by the locally installed agent, open a browser and navigate to `http://NODE:19999`, replacing `NODE` with either `localhost` or
-the hostname/IP address of the remote node. You can also read more about
-[the agent dashboard](/docs/visualizations/accessing-netdata-dashboards/netdata-agent-dashboards).
-
 #### Configuration
 
 Discover the recommended way to [configure Netdata's settings or behavior](/docs/configuring/configuration) using our built-in
@@ -62,10 +58,10 @@ learn more about [how data collectors work](/docs/data-collection). If there's a
 collector](/docs/data-collection/monitor-anything) for metrics you need, [configure the collector](/docs/data-collection/collectors-configuration)
 or read about its requirements to configure your endpoint to publish metrics in the correct format and endpoint.
 
-#### Alarms & notifications
+#### Alerts & notifications
 
-Netdata comes with hundreds of preconfigured alarms, designed by our monitoring gurus in parallel with our open-source
-community, but you may want to [edit alarms](/docs/alerting/health-configuration-reference) or
+Netdata comes with hundreds of preconfigured alerts, designed by our monitoring gurus in parallel with our open-source
+community, but you may want to [edit alerts](/docs/alerting/health-configuration-reference) or
 [enable notifications](/docs/alerting/notifications) to customize your Netdata experience.
 
 #### Make your deployment production ready
@@ -99,7 +95,7 @@ To install, copy the script, paste it into your node's terminal, and hit `Enter`
 > If you plan to also claim the node to Netdata Cloud, make sure to replace `YOUR_CLAIM_TOKEN` with the claim token of your space, and `YOUR_ROOM_ID` with the ID of the room you are claiming to.
 > You can leave the room id blank to have your node claimed to the default "All nodes" room.
 
-Jump down to [what's next](#whats-next) to learn how to view your new dashboard and take your next steps monitoring and
+Jump up to [what's next](#whats-next) to learn how to view your new dashboard and take your next steps in monitoring and
 troubleshooting with Netdata.
 
 ## Other installation methods
@@ -213,6 +209,27 @@ _actively_ contributing to Netdata's future.
 
 We are tracking a few issues related to installation and packaging.
 
+#### Installs on hosts without IPv4 connectivity
+
+Our regular installation process requires access to a number of GitHub services that do not have IPv6 connectivity. As
+such, using the kickstart install script on such hosts generally does not work, and will typically fail with an
+error from cURL or wget about connection timeouts. You can check if your system is affected by this by attempting
+to connect to (or ping) `https://api.github.com/`. Failing to connect indicates that you are affected by this issue.
+
+There are three potential workarounds for this:
+
+1. You can configure your system with a proper IPv6 transition mechanism, such as NAT64. GitHub’s anachronisms
+   affect many projects other than just Netdata, and there are unfortunately a number of other services out there
+   that do not provide IPv6 connectivity, so taking this route is likely to save you time in the future as well.
+2. If you are using a system that we publish native packages for (see our [platform support
+   policy](/docs/installing/platform-support-policy) for more details),
+   you can manually set up our native package repositories as outlined in our [native package install
+   documentation](/docs/installing/native-linux-distribution-packages). Our official
+   package repositories do provide service over IPv6, so they work without issue on hosts without IPv4 connectivity.
+3. If neither of the above options work for you, you can still install using our [offline installation
+   instructions](/docs/installing/offline-systems), though
+   do note that the offline install source must be prepared from a system with IPv4 connectivity.
+
 #### Older distributions (Ubuntu 14.04, Debian 8, CentOS 6) and OpenSSL
 
 If you're running an older Linux distribution or one that has reached EOL, such as Ubuntu 14.04 LTS, Debian 8, or CentOS
@@ -232,7 +249,7 @@ PowerTools, to gather hard dependencies. See the [CentOS 6](/docs/installing/fro
 
 #### Access to file is not permitted
 
-If you see an error similar to `Access to file is not permitted: /usr/share/netdata/web//index.html` when you try to
+If you see an error similar to `Access to file is not permitted: /usr/share/netdata/web/index.html` when you try to
 visit the Agent dashboard at `http://NODE:19999`, you need to update Netdata's permissions to match those of your
 system.
 
@@ -249,7 +266,7 @@ These files need to have the same user and group used to install your netdata. S
 `netdata` and group `netdata`, in this scenario you will need to run the following command to fix the error:
 
 ```bash
-# chown -R netdata.netdata /usr/share/netdata/web
+# chown -R netdata:netdata /usr/share/netdata/web
 ```
 
 #### Multiple versions of OpenSSL

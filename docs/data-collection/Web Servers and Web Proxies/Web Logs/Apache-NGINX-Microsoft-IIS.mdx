@@ -1,138 +1,115 @@
----
-custom_edit_url: "https://github.com/netdata/go.d.plugin/edit/master/modules/weblog/README.md"
-sidebar_label: "Apache, NGINX, Microsoft IIS"
-learn_status: "Published"
-toc_max_heading_level: "4"
-learn_rel_path: "Data collection/Web Servers and Web Proxies/Web Logs"
-description: "Monitor the health and performance of Apache or Nginx logs with zero configuration, per-second metric granularity, and interactive visualizations."
-sidebar_position: "648600"
-slug: "/data-collection/web-servers-and-web-proxies/web-logs/apache-nginx-microsoft-iis"
----
+------|:----------|:----|
+| web_log.requests | requests | requests/s |
+| web_log.excluded_requests | unmatched | requests/s |
+| web_log.type_requests | success, bad, redirect, error | requests/s |
+| web_log.status_code_class_responses | 1xx, 2xx, 3xx, 4xx, 5xx | responses/s |
+| web_log.status_code_class_1xx_responses | a dimension per 1xx code | responses/s |
+| web_log.status_code_class_2xx_responses | a dimension per 2xx code | responses/s |
+| web_log.status_code_class_3xx_responses | a dimension per 3xx code | responses/s |
+| web_log.status_code_class_4xx_responses | a dimension per 4xx code | responses/s |
+| web_log.status_code_class_5xx_responses | a dimension per 5xx code | responses/s |
+| web_log.bandwidth | received, sent | kilobits/s |
+| web_log.request_processing_time | min, max, avg | milliseconds |
+| web_log.requests_processing_time_histogram | a dimension per bucket | requests/s |
+| web_log.upstream_response_time | min, max, avg | milliseconds |
+| web_log.upstream_responses_time_histogram | a dimension per bucket | requests/s |
+| web_log.current_poll_uniq_clients | ipv4, ipv6 | clients |
+| web_log.vhost_requests | a dimension per vhost | requests/s |
+| web_log.port_requests | a dimension per port | requests/s |
+| web_log.scheme_requests | http, https | requests/s |
+| web_log.http_method_requests | a dimension per HTTP method | requests/s |
+| web_log.http_version_requests | a dimension per HTTP version | requests/s |
+| web_log.ip_proto_requests | ipv4, ipv6 | requests/s |
+| web_log.ssl_proto_requests | a dimension per SSL protocol | requests/s |
+| web_log.ssl_cipher_suite_requests | a dimension per SSL cipher suite | requests/s |
+| web_log.url_pattern_requests | a dimension per URL pattern | requests/s |
+| web_log.custom_field_pattern_requests | a dimension per custom field pattern | requests/s |
+
+### Per custom time field
+
+TBD
+
+This scope has no labels.
+
+Metrics:
+
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| web_log.custom_time_field_summary | min, max, avg | milliseconds |
+| web_log.custom_time_field_histogram | a dimension per bucket | observations |
+
+### Per custom numeric field
+
+TBD
+
+This scope has no labels.
+
+Metrics:
+
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| web_log.custom_numeric_field_{{field_name}}_summary | min, max, avg | {{units}} |
+
+### Per URL pattern
+
+TBD
+
+This scope has no labels.
+
+Metrics:
+
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| web_log.url_pattern_status_code_responses | a dimension per pattern | responses/s |
+| web_log.url_pattern_http_method_requests | a dimension per HTTP method | requests/s |
+| web_log.url_pattern_bandwidth | received, sent | kilobits/s |
+| web_log.url_pattern_request_processing_time | min, max, avg | milliseconds |
 
 
-# Web server log (Apache, NGINX, IIS) collector
 
-This module parses [`Apache`](https://httpd.apache.org/), [`NGINX`](https://nginx.org/en/) and [Microsoft IIS](https://www.iis.net/) web servers logs.
+## Alerts
 
-## Metrics
 
-All metrics have "web_log." prefix.
+The following alerts are available:
 
-| Metric                              |       Scope       |                 Dimensions                  |    Units     |
-|-------------------------------------|:-----------------:|:-------------------------------------------:|:------------:|
-| requests                            |      global       |                  requests                   |  requests/s  |
-| excluded_requests                   |      global       |                  unmatched                  |  requests/s  |
-| type_requests                       |      global       |        success, bad, redirect, error        |  requests/s  |
-| status_code_class_responses         |      global       |           1xx, 2xx, 3xx, 4xx, 5xx           | responses/s  |
-| status_code_class_1xx_responses     |      global       |       <i>a dimension per 1xx code</i>       | responses/s  |
-| status_code_class_2xx_responses     |      global       |       <i>a dimension per 2xx code</i>       | responses/s  |
-| status_code_class_3xx_responses     |      global       |       <i>a dimension per 3xx code</i>       | responses/s  |
-| status_code_class_4xx_responses     |      global       |       <i>a dimension per 4xx code</i>       | responses/s  |
-| status_code_class_5xx_responses     |      global       |       <i>a dimension per 5xx code</i>       | responses/s  |
-| bandwidth                           |      global       |               received, sent                |  kilobits/s  |
-| request_processing_time             |      global       |                min, max, avg                | milliseconds |
-| requests_processing_time_histogram  |      global       |        <i>a dimension per bucket</i>        |  requests/s  |
-| upstream_response_time              |      global       |                min, max, avg                | milliseconds |
-| upstream_responses_time_histogram   |      global       |        <i>a dimension per bucket</i>        |  requests/s  |
-| current_poll_uniq_clients           |      global       |                 ipv4, ipv6                  |   clients    |
-| vhost_requests                      |      global       |        <i>a dimension per vhost</i>         |  requests/s  |
-| port_requests                       |      global       |         <i>a dimension per port</i>         |  requests/s  |
-| scheme_requests                     |      global       |                 http, https                 |  requests/s  |
-| http_method_requests                |      global       |     <i>a dimension per HTTP method</i>      |  requests/s  |
-| http_version_requests               |      global       |     <i>a dimension per HTTP version</i>     |  requests/s  |
-| ip_proto_requests                   |      global       |                 ipv4, ipv6                  |  requests/s  |
-| ssl_proto_requests                  |      global       |     <i>a dimension per SSL protocol</i>     |  requests/s  |
-| ssl_cipher_suite_requests           |      global       |   <i>a dimension per SSL cipher suite</i>   |  requests/s  |
-| url_pattern_requests                |      global       |     <i>a dimension per URL pattern</i>      |  requests/s  |
-| custom_field_pattern_requests       |      global       | <i>a dimension per custom field pattern</i> |  requests/s  |
-| custom_time_field_summary           | custom time field |                min, max, avg                | milliseconds |
-| custom_time_field_histogram         | custom time field |        <i>a dimension per bucket</i>        | observations |
-| url_pattern_status_code_responses   |    URL pattern    |       <i>a dimension per pattern</i>        | responses/s  |
-| url_pattern_http_method_requests    |    URL pattern    |     <i>a dimension per HTTP method</i>      |  requests/s  |
-| url_pattern_bandwidth               |    URL pattern    |               received, sent                |  kilobits/s  |
-| url_pattern_request_processing_time |    URL pattern    |                min, max, avg                | milliseconds |
+| Alert name  | On metric | Description |
+|:------------|:----------|:------------|
+| [ web_log_1m_unmatched ](https://github.com/netdata/netdata/blob/master/health/health.d/web_log.conf) | web_log.excluded_requests | percentage of unparsed log lines over the last minute |
+| [ web_log_1m_requests ](https://github.com/netdata/netdata/blob/master/health/health.d/web_log.conf) | web_log.type_requests | ratio of successful HTTP requests over the last minute (1xx, 2xx, 304, 401) |
+| [ web_log_1m_redirects ](https://github.com/netdata/netdata/blob/master/health/health.d/web_log.conf) | web_log.type_requests | ratio of redirection HTTP requests over the last minute (3xx except 304) |
+| [ web_log_1m_bad_requests ](https://github.com/netdata/netdata/blob/master/health/health.d/web_log.conf) | web_log.type_requests | ratio of client error HTTP requests over the last minute (4xx except 401) |
+| [ web_log_1m_internal_errors ](https://github.com/netdata/netdata/blob/master/health/health.d/web_log.conf) | web_log.type_requests | ratio of server error HTTP requests over the last minute (5xx) |
+| [ web_log_web_slow ](https://github.com/netdata/netdata/blob/master/health/health.d/web_log.conf) | web_log.request_processing_time | average HTTP response time over the last 1 minute |
+| [ web_log_5m_requests_ratio ](https://github.com/netdata/netdata/blob/master/health/health.d/web_log.conf) | web_log.type_requests | ratio of successful HTTP requests over over the last 5 minutes, compared with the previous 5 minutes |
 
-## Log Parsers
 
-Weblog supports 4 different log parsers:
+## Setup
 
-- `CSV`
-- [`JSON`](https://www.json.org/json-en.html)
-- [`LTSV`](http://ltsv.org/)
-- `RegExp`
+### Prerequisites
 
-Try to avoid using `RegExp` because it's much slower than the other parsers. Prefer to use `LTSV` or `CSV` parser.
+No action required.
 
-There is an example job for every log parser.
+### Configuration
 
-```yaml
-jobs:
-  - name: csv_parser_example
-    path: /path/to/file.log
-    log_type: csv
-    csv_config:
-      format: 'FORMAT'
-      fields_per_record: -1
-      delimiter: ' '
-      trim_leading_space: no
+#### File
 
-  - name: json_parser_example
-    path: /path/to/file.log
-    log_type: json
-    json_config:
-      mapping:
-        label1: field1
-        label2: field2
+The configuration file name for this integration is `go.d/web_log.conf`.
 
-  - name: ltsv_parser_example
-    path: /path/to/file.log
-    log_type: ltsv
-    ltsv_config:
-      field_delimiter: ' '
-      value_delimiter: ':'
-      mapping:
-        label1: field1
-        label2: field2
 
-  - name: regexp_parser_example
-    path: /path/to/file.log
-    log_type: regexp
-    regexp_config:
-      pattern: 'PATTERN'
+You can edit the configuration file using the `edit-config` script from the
+Netdata [config directory](/docs/configuring/configuration#the-netdata-config-directory).
+
+```bash
+cd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata
+sudo ./edit-config go.d/web_log.conf
 ```
+#### Options
 
-## Log Parser Auto-Detection
+Weblog is aware of how to parse and interpret the following fields (**known fields**):
 
-If `log_type` parameter set to `auto` (which is default), weblog will try to auto-detect appropriate log parser and log
-format using the last line of the log file.
-
-- checks if format is `CSV` (using regexp).
-- checks if format is `JSON` (using regexp).
-- assumes format is `CSV` and tries to find appropriate `CSV` log format using predefind list of formats. It tries to
-  parse the line using each of them in the following order:
-
-```sh
-$host:$server_port $remote_addr - - [$time_local] "$request" $status $body_bytes_sent - - $request_length $request_time $upstream_response_time
-$host:$server_port $remote_addr - - [$time_local] "$request" $status $body_bytes_sent - - $request_length $request_time
-$host:$server_port $remote_addr - - [$time_local] "$request" $status $body_bytes_sent     $request_length $request_time $upstream_response_time
-$host:$server_port $remote_addr - - [$time_local] "$request" $status $body_bytes_sent     $request_length $request_time
-$host:$server_port $remote_addr - - [$time_local] "$request" $status $body_bytes_sent
-                   $remote_addr - - [$time_local] "$request" $status $body_bytes_sent - - $request_length $request_time $upstream_response_time
-                   $remote_addr - - [$time_local] "$request" $status $body_bytes_sent - - $request_length $request_time
-                   $remote_addr - - [$time_local] "$request" $status $body_bytes_sent     $request_length $request_time $upstream_response_time
-                   $remote_addr - - [$time_local] "$request" $status $body_bytes_sent     $request_length $request_time
-                   $remote_addr - - [$time_local] "$request" $status $body_bytes_sent
-```
-
-The first one matches is used later. If you use default Apache/NGINX log format auto-detect will do for you. If it
-doesn't work you need [to set format manually](#custom-log-format).
-
-## Known Fields
-
-These are [NGINX](http://nginx.org/en/docs/varindex.html)
-and [Apache](http://httpd.apache.org/docs/current/mod/mod_log_config.html) log format variables.
-
-Weblog is aware how to parse and interpret the fields:
+> [nginx](https://nginx.org/en/docs/varindex.html)
+>
+> [apache](https://httpd.apache.org/docs/current/mod/mod_log_config.html)
 
 | nginx                   | apache   | description                                                                              |
 |-------------------------|----------|------------------------------------------------------------------------------------------|
@@ -153,186 +130,159 @@ Weblog is aware how to parse and interpret the fields:
 | $ssl_protocol           | -        | Protocol of an established SSL connection.                                               |
 | $ssl_cipher             | -        | String of ciphers used for an established SSL connection.                                |
 
-In addition to that weblog understands [user defined fields](#custom-fields-feature).
-
 Notes:
 
-- Apache `%h` logs the IP address if [HostnameLookups](https://httpd.apache.org/docs/2.4/mod/core.html#hostnamelookups)
-  is Off. The web log collector counts hostnames as IPv4 addresses. We recommend either to disable HostnameLookups or
-  use `%a` instead of `%h`.
-- Since httpd 2.0, unlike 1.3, the `%b` and `%B` format strings do not represent the number of bytes sent to the client,
-  but simply the size in bytes of the HTTP response. It will differ, for instance, if the connection is aborted, or
-  if SSL is used. The `%O` format provided by [`mod_logio`](https://httpd.apache.org/docs/2.4/mod/mod_logio.html)
-  will log the actual number of bytes sent over the network.
+- Apache `%h` logs the IP address if [HostnameLookups](https://httpd.apache.org/docs/2.4/mod/core.html#hostnamelookups) is Off. The web log collector counts hostnames as IPv4 addresses. We recommend either to disable HostnameLookups or use `%a` instead of `%h`.
+- Since httpd 2.0, unlike 1.3, the `%b` and `%B` format strings do not represent the number of bytes sent to the client, but simply the size in bytes of the HTTP response. It will differ, for instance, if the connection is aborted, or if SSL is used. The `%O` format provided by [`mod_logio`](https://httpd.apache.org/docs/2.4/mod/mod_logio.html) will log the actual number of bytes sent over the network.
 - To get `%I` and `%O` working you need to enable `mod_logio` on Apache.
 - NGINX logs URI with query parameters, Apache doesnt.
-- `$request` is parsed into `$request_method`, `$request_uri` and `$server_protocol`. If you have `$request` in your log
-  format, there is no sense to have others.
-- Don't use both `$bytes_sent` and `$body_bytes_sent` (`%O` and `%B` or `%b`). The module does not distinguish between
-  these parameters.
+- `$request` is parsed into `$request_method`, `$request_uri` and `$server_protocol`. If you have `$request` in your log format, there is no sense to have others.
+- Don't use both `$bytes_sent` and `$body_bytes_sent` (`%O` and `%B` or `%b`). The module does not distinguish between these parameters.
 
-## Custom Log Format
 
-Custom log format is easy. Use [known fields](#known-fields) to construct your log format.
+<details><summary>Config options</summary>
 
-- If using `CSV` parser
+| Name | Description | Default | Required |
+|:----|:-----------|:-------|:--------:|
+| update_every | Data collection frequency. | 1 | False |
+| autodetection_retry | Recheck interval in seconds. Zero means no recheck will be scheduled. | 0 | False |
+| path | Path to the web server log file. |  | True |
+| exclude_path | Path to exclude. | *.gz | False |
+| url_patterns | List of URL patterns. | [] | False |
+| url_patterns.name | Used as a dimension name. |  | True |
+| url_patterns.pattern | Used to match against full original request URI. Pattern syntax in [matcher](https://github.com/netdata/go.d.plugin/tree/master/pkg/matcher#supported-format). |  | True |
+| parser | Log parser configuration. |  | False |
+| parser.log_type | Log parser type. | auto | False |
+| parser.csv_config | CSV log parser config. |  | False |
+| parser.csv_config.delimiter | CSV field delimiter. | , | False |
+| parser.csv_config.format | CSV log format. |  | False |
+| parser.ltsv_config | LTSV log parser config. |  | False |
+| parser.ltsv_config.field_delimiter | LTSV field delimiter. | \t | False |
+| parser.ltsv_config.value_delimiter | LTSV value delimiter. | : | False |
+| parser.ltsv_config.mapping | LTSV fields mapping to **known fields**. |  | True |
+| parser.json_config | JSON log parser config. |  | False |
+| parser.json_config.mapping | JSON fields mapping to **known fields**. |  | True |
+| parser.regexp_config | RegExp log parser config. |  | False |
+| parser.regexp_config.pattern | RegExp pattern with named groups. |  | True |
 
-Since weblog understands NGINX and Apache variables all you need is to copy your log format and... that is it!
-If there is a field that is not known by the weblog it's not a problem. It will skip it during parsing. We suggest
-replace all unknown fields with `-` for optimization purposes.
+##### url_patterns
 
-Let's take as an example some non default format.
+"URL pattern" scope metrics will be collected for each URL pattern. 
 
-```bash
-# apache
-LogFormat "\"%{Referer}i\" \"%{User-agent}i\" %h %l %u %t \"%r\" %>s %b" custom
-
-# nginx
-log_format custom '"$http_referer" "$http_user_agent" '
-                  '$remote_addr - $remote_user [$time_local] '
-                  '"$request" $status $body_bytes_sent'
-```
-
-To get it working we need to copy the format without any changes (make it a line for nginx). Replacing unknown fields is
-optional but recommended.
-
-Special case:
-
-Both `%t` and `$time_local` fields represent time
-in [Common Log Format](https://www.w3.org/Daemon/User/Config/Logging.html#common-logfile-format). It is a special case
-because it's in fact 2 fields after csv parse (ex.: `[22/Mar/2009:09:30:31 +0100]`). Weblog understands it, and you
-don't
-need to replace it with `-` (if we want to do it we need to make it `- -`).
+Option syntax:
 
 ```yaml
-jobs:
-  - name: apache_csv_custom_format_example
-    path: /path/to/file.log
-    log_type: csv
-    csv_config:
-      format: '- - %h - - %t \"%r\" %>s %b'
-
-  - name: nginx_csv_custom_format_example
-    path: /path/to/file.log
-    log_type: csv
-    csv_config:
-      format: '- - $remote_addr - - [$time_local] "$request" $status $body_bytes_sent'
+url_patterns:
+  - name: name1
+    pattern: pattern1
+  - name: name2
+    pattern: pattern2
 ```
 
-- If using `JSON` parser
 
-Provide fields [mapping](#known-fields) if needed. Don't use `$` and `%` prefixes for mapped field names. They are only
-needed in `CSV` format.
+##### parser.log_type
 
-- If using `LTSV` parser
+Weblog supports 5 different log parsers:
 
-Provide fields [mapping](#known-fields) if needed. Don't use `$` and `%` prefixes for mapped field names. They are only
-needed in `CSV` format.
+| Parser type | Description                               |
+|-------------|-------------------------------------------|
+| auto        | Use CSV and auto-detect format            |
+| csv         | A comma-separated values                  |
+| json        | [JSON](https://www.json.org/json-en.html) |
+| ltsv        | [LTSV](http://ltsv.org/)                  |
+| regexp      | Regular expression with named groups      |
 
-- If using `RegExp` parser
-
-Use pattern with subexpressions names. These names should be known by weblog.
-
-## Custom Fields Feature
-
-Weblog is able to extract user defined fields and count patterns matches against these fields.
-
-This feature needs:
-
-- custom log format with user defined fields
-- list of patterns to match against appropriate fields
-
-Pattern syntax: [matcher](https://github.com/netdata/go.d.plugin/tree/master/pkg/matcher#supported-format).
-
-There is an example with 2 custom fields - `$http_referer` and `$http_user_agent`. Weblog is unaware of these fields,
-but we still can get some info from them.
+Syntax:
 
 ```yaml
-  - name: nginx_csv_custom_fields_example
-    path: /path/to/file.log
-    log_type: csv
-    csv_config:
-      format: '- - $remote_addr - - [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent"'
-    custom_fields:
-      - name: http_referer     # same name as in 'format' without $
-        patterns:
-          - name: cacti
-            match: '~ cacti'
-          - name: observium
-            match: '~ observium'
-      - name: http_user_agent  # same name as in 'format' without $
-        patterns:
-          - name: android
-            match: '~ Android'
-          - name: iphone
-            match: '~ iPhone'
-          - name: other
-            match: '* *'
+parser:
+  log_type: auto
 ```
 
-## Custom time fields feature
+If `log_type` parameter set to `auto` (which is default), weblog will try to auto-detect appropriate log parser and log format using the last line of the log file.
 
-The web log collector is also able to extract user defined time fields and could count min/avg/max + histogram against
-these fields.
+- checks if format is `CSV` (using regexp).
+- checks if format is `JSON` (using regexp).
+- assumes format is `CSV` and tries to find appropriate `CSV` log format using predefined list of formats. It tries to parse the line using each of them in the following order (the first one matches is used later):
 
-This feature needs:
+  ```sh
+  $host:$server_port $remote_addr - - [$time_local] "$request" $status $body_bytes_sent - - $request_length $request_time $upstream_response_time
+  $host:$server_port $remote_addr - - [$time_local] "$request" $status $body_bytes_sent - - $request_length $request_time
+  $host:$server_port $remote_addr - - [$time_local] "$request" $status $body_bytes_sent     $request_length $request_time $upstream_response_time
+  $host:$server_port $remote_addr - - [$time_local] "$request" $status $body_bytes_sent     $request_length $request_time
+  $host:$server_port $remote_addr - - [$time_local] "$request" $status $body_bytes_sent
+  $remote_addr - - [$time_local] "$request" $status $body_bytes_sent - - $request_length $request_time $upstream_response_time
+  $remote_addr - - [$time_local] "$request" $status $body_bytes_sent - - $request_length $request_time
+  $remote_addr - - [$time_local] "$request" $status $body_bytes_sent     $request_length $request_time $upstream_response_time
+  $remote_addr - - [$time_local] "$request" $status $body_bytes_sent     $request_length $request_time
+  $remote_addr - - [$time_local] "$request" $status $body_bytes_sent
+  ```
 
-- A custom log format with user-defined time fields.
-- A histogram to show response time in seconds, which is optional.
+  If you're using the default Apache/NGINX log format, auto-detect will work for you. If it doesn't work you need to set the format manually.
 
-As an example, Apache [`mod_logio`](https://httpd.apache.org/docs/2.4/mod/mod_logio.html) adds a `^FB` logging
-directive. This value shows a delay in microseconds between when the request arrived, and the first byte of the response
-headers are written.
 
-As with the custom fields feature, Netdata's web log collector is unaware of these fields, but we can still get some
-info from them.
+##### parser.csv_config.format
+
+
+
+##### parser.ltsv_config.mapping
+
+The mapping is a dictionary where the key is a field, as in logs, and the value is the corresponding **known field**.
+
+> **Note**: don't use `$` and `%` prefixes for mapped field names.
 
 ```yaml
-  - name: apache_csv_custom_fields_example
-    path: /path/to/file.log
-    log_type: csv
-    csv_config:
-      format: '%v %a %p %m %H \"%U\" %t %>s %O %I %D %^FB \"%{Referer}i\" \"%{User-Agent}i\" \"%r\"'
-    custom_time_fields:
-      - name: '^FB'
-        histogram: [.005, .01, .025, .05, .1, .25, .5, 1, 2.5, 5, 10] # optional field
+parser:
+  log_type: ltsv
+  ltsv_config:
+    mapping:
+      label1: field1
+      label2: field2
 ```
 
-## Configuration
 
-Edit the `go.d/web_log.conf` configuration file using `edit-config` from the
-Netdata [config directory](/docs/configuring/configuration), which is typically at `/etc/netdata`.
+##### parser.json_config.mapping
 
-```bash
-cd /etc/netdata # Replace this path with your Netdata config directory
-sudo ./edit-config go.d/web_log.conf
-```
+The mapping is a dictionary where the key is a field, as in logs, and the value is the corresponding **known field**.
 
-This module needs only `path` to log file. If it fails to auto-detect your log format you
-need [to set it manually](#custom-log-format).
+> **Note**: don't use `$` and `%` prefixes for mapped field names.
 
 ```yaml
-jobs:
-  - name: nginx
-    path: /var/log/nginx/access.log
-
-  - name: apache
-    path: /var/log/apache2/access.log
-    log_type: csv
-    csv_config:
-      format: '- - %h - - %t \"%r\" %>s %b'
-
-  - name: iis
-    path: /mnt/c/inetpub/logs/LogFiles/W3SVC1/u_ex*.log
-    log_type: csv
-    csv_config:
-      format: '- - $host $request_method $request_uri - $server_port - $remote_addr - - $status - - $request_time'
+parser:
+  log_type: json
+  json_config:
+    mapping:
+      label1: field1
+      label2: field2
 ```
 
-For all available options, please see the
-module [configuration file](https://github.com/netdata/go.d.plugin/blob/master/config/go.d/web_log.conf).
+
+##### parser.regexp_config.pattern
+
+Use pattern with subexpressions names. These names should be **known fields**.
+
+> **Note**: don't use `$` and `%` prefixes for mapped field names.
+
+Syntax:
+
+```yaml
+parser:
+  log_type: regexp
+  regexp_config:
+    pattern: PATTERN
+```
+
+
+</details>
+
+#### Examples
+There are no configuration examples.
+
+
 
 ## Troubleshooting
+
+### Debug Mode
 
 To troubleshoot issues with the `web_log` collector, run the `go.d.plugin` with the debug option enabled. The output
 should give you clues as to why the collector isn't working.
@@ -355,3 +305,5 @@ should give you clues as to why the collector isn't working.
   ```bash
   ./go.d.plugin -d -m web_log
   ```
+
+

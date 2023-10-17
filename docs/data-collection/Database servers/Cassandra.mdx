@@ -1,80 +1,54 @@
----
-custom_edit_url: "https://github.com/netdata/go.d.plugin/edit/master/modules/cassandra/README.md"
-sidebar_label: "Cassandra"
-learn_status: "Published"
-toc_max_heading_level: "4"
-learn_rel_path: "Data collection/Database servers"
-description: "Monitor the health and performance of Cassandra database servers with zero configuration, per-second metric granularity, and interactive visualizations."
-sidebar_position: "646000"
-slug: "/data-collection/database-servers/cassandra"
----
-# Cassandra collector
+------|:----------|:----|
+| cassandra.client_requests_rate | read, write | requests/s |
+| cassandra.client_request_read_latency_histogram | p50, p75, p95, p98, p99, p999 | seconds |
+| cassandra.client_request_write_latency_histogram | p50, p75, p95, p98, p99, p999 | seconds |
+| cassandra.client_requests_latency | read, write | seconds |
+| cassandra.row_cache_hit_ratio | hit_ratio | percentage |
+| cassandra.row_cache_hit_rate | hits, misses | events/s |
+| cassandra.row_cache_utilization | used | percentage |
+| cassandra.row_cache_size | size | bytes |
+| cassandra.key_cache_hit_ratio | hit_ratio | percentage |
+| cassandra.key_cache_hit_rate | hits, misses | events/s |
+| cassandra.key_cache_utilization | used | percentage |
+| cassandra.key_cache_size | size | bytes |
+| cassandra.storage_live_disk_space_used | used | bytes |
+| cassandra.compaction_completed_tasks_rate | completed | tasks/s |
+| cassandra.compaction_pending_tasks_count | pending | tasks |
+| cassandra.compaction_compacted_rate | compacted | bytes/s |
+| cassandra.jvm_memory_used | heap, nonheap | bytes |
+| cassandra.jvm_gc_rate | parnew, cms | gc/s |
+| cassandra.jvm_gc_time | parnew, cms | seconds |
+| cassandra.dropped_messages_rate | dropped | messages/s |
+| cassandra.client_requests_timeouts_rate | read, write | timeout/s |
+| cassandra.client_requests_unavailables_rate | read, write | exceptions/s |
+| cassandra.client_requests_failures_rate | read, write | failures/s |
+| cassandra.storage_exceptions_rate | storage | exceptions/s |
 
-## Overview
-
-[Cassandra](https://cassandra.apache.org/_/index.html) is an open-source NoSQL database management system.
-
-This collector gathers metrics from one or more Cassandra servers, depending on your configuration.
-
-## Collected metrics
-
-Metrics grouped by *scope*.
-
-The scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.
-
-### global
-
-These metrics refer to the entire monitored application.
-
-This scope has no labels.
-
-Metrics:
-
-| Metric                                           |          Dimensions           |     Unit     |
-|--------------------------------------------------|:-----------------------------:|:------------:|
-| cassandra.client_requests_rate                   |          read, write          |  requests/s  |
-| cassandra.client_request_read_latency_histogram  | p50, p75, p95, p98, p99, p999 |   seconds    |
-| cassandra.client_request_write_latency_histogram | p50, p75, p95, p98, p99, p999 |   seconds    |
-| cassandra.client_requests_latency                |          read, write          |   seconds    |
-| cassandra.row_cache_hit_ratio                    |           hit_ratio           |  percentage  |
-| cassandra.row_cache_hit_rate                     |         hits, misses          |   events/s   |
-| cassandra.row_cache_utilization                  |             used              |  percentage  |
-| cassandra.row_cache_size                         |             size              |    bytes     |
-| cassandra.key_cache_hit_ratio                    |           hit_ratio           |  percentage  |
-| cassandra.key_cache_hit_rate                     |         hits, misses          |   events/s   |
-| cassandra.key_cache_utilization                  |             used              |  percentage  |
-| cassandra.key_cache_size                         |             size              |    bytes     |
-| cassandra.storage_live_disk_space_used           |             used              |    bytes     |
-| cassandra.compaction_completed_tasks_rate        |           completed           |   tasks/s    |
-| cassandra.compaction_pending_tasks_count         |            pending            |    tasks     |
-| cassandra.compaction_compacted_rate              |           compacted           |   bytes/s    |
-| cassandra.jvm_memory_used                        |         heap, nonheap         |    bytes     |
-| cassandra.jvm_gc_rate                            |          parnew, cms          |     gc/s     |
-| cassandra.jvm_gc_time                            |          parnew, cms          |   seconds    |
-| cassandra.dropped_messages_rate                  |            dropped            |  messages/s  |
-| cassandra.client_requests_timeouts_rate          |          read, write          |  timeout/s   |
-| cassandra.client_requests_unavailables_rate      |          read, write          | exceptions/s |
-| cassandra.client_requests_failures_rate          |          read, write          |  failures/s  |
-| cassandra.storage_exceptions_rate                |            storage            | exceptions/s |
-
-### thread pool
+### Per thread pool
 
 Metrics related to Cassandra's thread pools. Each thread pool provides its own set of the following metrics.
 
 Labels:
 
-| Label       | Description      |
-|-------------|------------------|
+| Label      | Description     |
+|:-----------|:----------------|
 | thread_pool | thread pool name |
 
 Metrics:
 
-| Metric                                    | Dimensions |  Unit   |
-|-------------------------------------------|:----------:|:-------:|
-| cassandra.thread_pool_active_tasks_count  |   active   |  tasks  |
-| cassandra.thread_pool_pending_tasks_count |  pending   |  tasks  |
-| cassandra.thread_pool_blocked_tasks_count |  blocked   |  tasks  |
-| cassandra.thread_pool_blocked_tasks_rate  |  blocked   | tasks/s |
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| cassandra.thread_pool_active_tasks_count | active | tasks |
+| cassandra.thread_pool_pending_tasks_count | pending | tasks |
+| cassandra.thread_pool_blocked_tasks_count | blocked | tasks |
+| cassandra.thread_pool_blocked_tasks_rate | blocked | tasks/s |
+
+
+
+## Alerts
+
+There are no alerts configured by default for this integration.
+
 
 ## Setup
 
@@ -97,21 +71,14 @@ To configure Cassandra with the [JMX Exporter](https://github.com/prometheus/jmx
   ```
 - Restart cassandra service.
 
+
+
 ### Configuration
 
 #### File
 
-The configuration file name is `go.d/cassandra.conf`.
+The configuration file name for this integration is `go.d/cassandra.conf`.
 
-The file format is YAML. Generally the format is:
-
-```yaml
-update_every: 1
-autodetection_retry: 0
-jobs:
-  - name: some_name1
-  - name: some_name1
-```
 
 You can edit the configuration file using the `edit-config` script from the
 Netdata [config directory](/docs/configuring/configuration#the-netdata-config-directory).
@@ -120,30 +87,29 @@ Netdata [config directory](/docs/configuring/configuration#the-netdata-config-di
 cd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata
 sudo ./edit-config go.d/cassandra.conf
 ```
-
 #### Options
 
 The following options can be defined globally: update_every, autodetection_retry.
 
-<details>
-<summary>Config options</summary>
 
-|         Name         | Description                                                                                               |            Default            | Required |
-|:--------------------:|-----------------------------------------------------------------------------------------------------------|:-----------------------------:|:--------:|
-|     update_every     | Data collection frequency.                                                                                |               5               |          |
-| autodetection_retry  | Re-check interval in seconds. Zero means not to schedule re-check.                                        |               0               |          |
-|         url          | Server URL.                                                                                               | http://127.0.0.1:7072/metrics |   yes    |
-|       username       | Username for basic HTTP authentication.                                                                   |                               |          |
-|       password       | Password for basic HTTP authentication.                                                                   |                               |          |
-|      proxy_url       | Proxy URL.                                                                                                |                               |          |
-|    proxy_username    | Username for proxy basic HTTP authentication.                                                             |                               |          |
-|    proxy_password    | Password for proxy basic HTTP authentication.                                                             |                               |          |
-|       timeout        | HTTP request timeout.                                                                                     |               2               |          |
-| not_follow_redirects | Redirect handling policy. Controls whether the client follows redirects.                                  |              no               |          |
-|   tls_skip_verify    | Server certificate chain and hostname validation policy. Controls whether the client performs this check. |              no               |          |
-|        tls_ca        | Certification authority that the client uses when verifying the server's certificates.                    |                               |          |
-|       tls_cert       | Client TLS certificate.                                                                                   |                               |          |
-|       tls_key        | Client TLS key.                                                                                           |                               |          |
+<details><summary>Config options</summary>
+
+| Name | Description | Default | Required |
+|:----|:-----------|:-------|:--------:|
+| update_every | Data collection frequency. | 5 | False |
+| autodetection_retry | Recheck interval in seconds. Zero means no recheck will be scheduled. | 0 | False |
+| url | Server URL. | http://127.0.0.1:7072/metrics | True |
+| username | Username for basic HTTP authentication. |  | False |
+| password | Password for basic HTTP authentication. |  | False |
+| proxy_url | Proxy URL. |  | False |
+| proxy_username | Username for proxy basic HTTP authentication. |  | False |
+| proxy_password | Password for proxy basic HTTP authentication. |  | False |
+| timeout | HTTP request timeout. | 2 | False |
+| not_follow_redirects | Redirect handling policy. Controls whether the client follows redirects. | False | False |
+| tls_skip_verify | Server certificate chain and hostname validation policy. Controls whether the client performs this check. | False | False |
+| tls_ca | Certification authority that the client uses when verifying the server's certificates. |  | False |
+| tls_cert | Client TLS certificate. |  | False |
+| tls_key | Client TLS key. |  | False |
 
 </details>
 
@@ -152,22 +118,18 @@ The following options can be defined globally: update_every, autodetection_retry
 ##### Basic
 
 A basic example configuration.
-<details>
-<summary>Config</summary>
 
 ```yaml
 jobs:
   - name: local
     url: http://127.0.0.1:7072/metrics
+
 ```
-
-</details>
-
 ##### HTTP authentication
 
 Local server with basic HTTP authentication.
-<details>
-<summary>Config</summary>
+
+<details><summary>Config</summary>
 
 ```yaml
 jobs:
@@ -175,23 +137,23 @@ jobs:
     url: http://127.0.0.1:7072/metrics
     username: foo
     password: bar
-```
 
+```
 </details>
 
 ##### HTTPS with self-signed certificate
 
 Local server with enabled HTTPS and self-signed certificate.
-<details>
-<summary>Config</summary>
+
+<details><summary>Config</summary>
 
 ```yaml
 jobs:
   - name: local
     url: https://127.0.0.1:7072/metrics
     tls_skip_verify: yes
-```
 
+```
 </details>
 
 ##### Multi-instance
@@ -200,8 +162,8 @@ jobs:
 
 Collecting metrics from local and remote instances.
 
-<details>
-<summary>Config</summary>
+
+<details><summary>Config</summary>
 
 ```yaml
 jobs:
@@ -210,13 +172,15 @@ jobs:
 
   - name: remote
     url: http://192.0.2.1:7072/metrics
-```
 
+```
 </details>
+
+
 
 ## Troubleshooting
 
-### Debug mode
+### Debug Mode
 
 To troubleshoot issues with the `cassandra` collector, run the `go.d.plugin` with the debug option enabled. The output
 should give you clues as to why the collector isn't working.
@@ -239,4 +203,5 @@ should give you clues as to why the collector isn't working.
   ```bash
   ./go.d.plugin -d -m cassandra
   ```
+
 

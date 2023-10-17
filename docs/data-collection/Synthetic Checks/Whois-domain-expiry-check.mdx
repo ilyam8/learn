@@ -1,43 +1,23 @@
----
-custom_edit_url: "https://github.com/netdata/go.d.plugin/edit/master/modules/whoisquery/README.md"
-sidebar_label: "Whois domain expiry check"
-learn_status: "Published"
-toc_max_heading_level: "4"
-learn_rel_path: "Data collection/Synthetic Checks"
-description: "Monitor the health and performance of domain expiry with zero configuration, per-second metric granularity, and interactive visualizations."
-sidebar_position: "644320"
-slug: "/data-collection/synthetic-checks/whois-domain-expiry-check"
----
-# Domain name expiry collector
-
-## Overview
-
-A domain name (often simply called a domain) is an easy-to-remember name
-that's associated with a physical IP address on the Internet.
-
-This collector monitors the remaining time before the domain expires.
-
-## Collected metrics
-
-Metrics grouped by *scope*.
-
-The scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.
-
-### domain
-
-These metrics refer to the configured source.
-
-Labels:
-
-| Label  | Description       |
-|--------|-------------------|
+-----------|:----------------|
 | domain | Configured source |
 
 Metrics:
 
-| Metric                           | Dimensions |  Unit   |
-|----------------------------------|:----------:|:-------:|
-| whoisquery.time_until_expiration |   expiry   | seconds |
+| Metric | Dimensions | Unit |
+|:------|:----------|:----|
+| whoisquery.time_until_expiration | expiry | seconds |
+
+
+
+## Alerts
+
+
+The following alerts are available:
+
+| Alert name  | On metric | Description |
+|:------------|:----------|:------------|
+| [ whoisquery_days_until_expiration ](https://github.com/netdata/netdata/blob/master/health/health.d/whoisquery.conf) | whoisquery.time_until_expiration | time until the domain name registration expires |
+
 
 ## Setup
 
@@ -49,17 +29,8 @@ No action required.
 
 #### File
 
-The configuration file name is `go.d/whoisquery.conf`.
+The configuration file name for this integration is `go.d/whoisquery.conf`.
 
-The file format is YAML. Generally, the format is:
-
-```yaml
-update_every: 1
-autodetection_retry: 0
-jobs:
-  - name: some_name1
-  - name: some_name1
-```
 
 You can edit the configuration file using the `edit-config` script from the
 Netdata [config directory](/docs/configuring/configuration#the-netdata-config-directory).
@@ -68,22 +39,21 @@ Netdata [config directory](/docs/configuring/configuration#the-netdata-config-di
 cd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata
 sudo ./edit-config go.d/whoisquery.conf
 ```
-
 #### Options
 
 The following options can be defined globally: update_every, autodetection_retry.
 
-<details>
-<summary>Config options</summary>
 
-|              Name              | Description                                                        | Default | Required |
-|:------------------------------:|--------------------------------------------------------------------|:-------:|:--------:|
-|          update_every          | Data collection frequency.                                         |    1    |          |
-|      autodetection_retry       | Re-check interval in seconds. Zero means not to schedule re-check. |    0    |          |
-|             source             | Domain address.                                                    |         |   yes    |
-| days_until_expiration_warning  | Number of days before the alarm status is warning.                 |   30    |          |
-| days_until_expiration_critical | Number of days before the alarm status is critical.                |   15    |          |
-|            timeout             | The query timeout in seconds.                                      |    5    |          |
+<details><summary>Config options</summary>
+
+| Name | Description | Default | Required |
+|:----|:-----------|:-------|:--------:|
+| update_every | Data collection frequency. | 1 | False |
+| autodetection_retry | Recheck interval in seconds. Zero means no recheck will be scheduled. | 0 | False |
+| source | Domain address. |  | True |
+| days_until_expiration_warning | Number of days before the alarm status is warning. | 30 | False |
+| days_until_expiration_critical | Number of days before the alarm status is critical. | 15 | False |
+| timeout | The query timeout in seconds. | 5 | False |
 
 </details>
 
@@ -92,15 +62,15 @@ The following options can be defined globally: update_every, autodetection_retry
 ##### Basic
 
 Basic configuration example
-<details>
-<summary>Config</summary>
+
+<details><summary>Config</summary>
 
 ```yaml
 jobs:
   - name: my_site
     source: my_site.com
-```
 
+```
 </details>
 
 ##### Multi-instance
@@ -109,8 +79,8 @@ jobs:
 
 Check the expiration status of the multiple domains.
 
-<details>
-<summary>Config</summary>
+
+<details><summary>Config</summary>
 
 ```yaml
 jobs:
@@ -119,13 +89,15 @@ jobs:
 
   - name: my_site2
     source: my_site2.com
-```
 
+```
 </details>
+
+
 
 ## Troubleshooting
 
-### Debug mode
+### Debug Mode
 
 To troubleshoot issues with the `whoisquery` collector, run the `go.d.plugin` with the debug option enabled. The output
 should give you clues as to why the collector isn't working.
@@ -148,3 +120,5 @@ should give you clues as to why the collector isn't working.
   ```bash
   ./go.d.plugin -d -m whoisquery
   ```
+
+

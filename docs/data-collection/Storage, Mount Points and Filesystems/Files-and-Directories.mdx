@@ -1,86 +1,123 @@
----
-custom_edit_url: "https://github.com/netdata/go.d.plugin/edit/master/modules/filecheck/README.md"
-sidebar_label: "Files and Directories"
-learn_status: "Published"
-toc_max_heading_level: "4"
-learn_rel_path: "Data collection/Storage, Mount Points and Filesystems"
-description: "Monitor the health and performance of files and directories with zero configuration, per-second metric granularity, and interactive visualizations."
-sidebar_position: "626080"
-slug: "/data-collection/storage,-mount-points-and-filesystems/files-and-directories"
----
+------|:----------|:----|
+| filecheck.file_existence | a dimension per file | boolean |
+| filecheck.file_mtime_ago | a dimension per file | seconds |
+| filecheck.file_size | a dimension per file | bytes |
+| filecheck.dir_existence | a dimension per directory | boolean |
+| filecheck.dir_mtime_ago | a dimension per directory | seconds |
+| filecheck.dir_num_of_files | a dimension per directory | files |
+| filecheck.dir_size | a dimension per directory | bytes |
 
 
-# Files and directories collector
 
-This module monitors files and directories.
+## Alerts
 
-File metrics:
+There are no alerts configured by default for this integration.
 
-- existence
-- time since the last modification
-- size
 
-Directory metrics:
+## Setup
 
-- existence
-- time since the last modification
-- number of files
-- size
+### Prerequisites
 
-## Permissions
+No action required.
 
-`netdata` user needs the following permissions on all the directories in pathname that lead to the file/dir:
+### Configuration
 
-- files monitoring: `execute`.
-- directories monitoring: `read` and `execute`.
+#### File
 
-If you need to modify the permissions we
-suggest [to use file access control lists](https://linux.die.net/man/1/setfacl):
+The configuration file name for this integration is `go.d/filecheck.conf`.
 
-```cmd
-setfacl -m u:netdata:rx file ...
-``` 
 
-> **Warning**: For security reasons, this should not be applied recursively, but only to the exact set of directories
-> that lead to the file/dir you want to monitor.
-
-## Metrics
-
-All metrics have "filecheck." prefix.
-
-| Metric           | Scope  |            Dimensions            |  Units  |
-|------------------|:------:|:--------------------------------:|:-------:|
-| file_existence   | global |   <i>a dimension per file</i>    | boolean |
-| file_mtime_ago   | global |   <i>a dimension per file</i>    | seconds |
-| file_size        | global |   <i>a dimension per file</i>    |  bytes  |
-| dir_existence    | global | <i>a dimension per directory</i> | boolean |
-| dir_mtime_ago    | global | <i>a dimension per directory</i> | seconds |
-| dir_num_of_files | global | <i>a dimension per directory</i> |  files  |
-| dir_size         | global | <i>a dimension per directory</i> |  bytes  |
-
-## Configuration
-
-Edit the `go.d/filecheck.conf` configuration file using `edit-config` from the
-Netdata [config directory](/docs/configuring/configuration), which is typically at `/etc/netdata`.
+You can edit the configuration file using the `edit-config` script from the
+Netdata [config directory](/docs/configuring/configuration#the-netdata-config-directory).
 
 ```bash
-cd /etc/netdata # Replace this path with your Netdata config directory
+cd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata
 sudo ./edit-config go.d/filecheck.conf
 ```
+#### Options
 
-Needs only a path to a file or a directory. The path supports `*` wildcard.
+The following options can be defined globally: update_every, autodetection_retry.
 
-Here is an example:
+
+<details><summary>Config options</summary>
+
+| Name | Description | Default | Required |
+|:----|:-----------|:-------|:--------:|
+| update_every | Data collection frequency. | 10 | False |
+| autodetection_retry | Recheck interval in seconds. Zero means no recheck will be scheduled. | 0 | False |
+| files | List of files to monitor. |  | True |
+| dirs | List of directories to monitor. |  | True |
+| discovery_every | Files and directories discovery interval. | 60 | False |
+
+##### files
+
+Files matching the selector will be monitored.
+
+- Logic: (pattern1 OR pattern2) AND !(pattern3 or pattern4)
+- Pattern syntax: [shell file name pattern](https://golang.org/pkg/path/filepath/#Match)
+- Syntax:
+
+```yaml
+files:
+  includes:
+    - pattern1
+    - pattern2
+  excludes:
+    - pattern3
+    - pattern4
+```
+
+
+##### dirs
+
+Directories matching the selector will be monitored.
+
+- Logic: (pattern1 OR pattern2) AND !(pattern3 or pattern4)
+- Pattern syntax: [shell file name pattern](https://golang.org/pkg/path/filepath/#Match)
+- Syntax:
+
+```yaml
+dirs:
+  includes:
+    - pattern1
+    - pattern2
+  excludes:
+    - pattern3
+    - pattern4
+```
+
+
+</details>
+
+#### Examples
+
+##### Files
+
+Files monitoring example configuration.
+
+<details><summary>Config</summary>
 
 ```yaml
 jobs:
-  - name: files_dirs_example
-    discovery_every: 30s
+  - name: files_example
     files:
       include:
         - '/path/to/file1'
         - '/path/to/file2'
         - '/path/to/*.log'
+
+```
+</details>
+
+##### Directories
+
+Directories monitoring example configuration.
+
+<details><summary>Config</summary>
+
+```yaml
+jobs:
+  - name: files_example
     dirs:
       collect_dir_size: no
       include:
@@ -88,32 +125,14 @@ jobs:
         - '/path/to/dir2'
         - '/path/to/dir3*'
 
-  - name: files_example
-    discovery_every: 30s
-    files:
-      include:
-        - '/path/to/file1'
-        - '/path/to/file2'
-        - '/path/to/*.log'
-
-  - name: dirs_example
-    discovery_every: 30s
-    dirs:
-      collect_dir_size: yes
-      include:
-        - '/path/to/dir1'
-        - '/path/to/dir2'
-        - '/path/to/dir3*'
 ```
+</details>
 
-For all available options, see the Filecheck
-collector's [configuration file](https://github.com/netdata/go.d.plugin/blob/master/config/go.d/filecheck.conf).
 
-## Limitations
-
-- filecheck uses `stat` call to collect metrics, which is not very efficient.
 
 ## Troubleshooting
+
+### Debug Mode
 
 To troubleshoot issues with the `filecheck` collector, run the `go.d.plugin` with the debug option enabled. The output
 should give you clues as to why the collector isn't working.
@@ -136,3 +155,5 @@ should give you clues as to why the collector isn't working.
   ```bash
   ./go.d.plugin -d -m filecheck
   ```
+
+

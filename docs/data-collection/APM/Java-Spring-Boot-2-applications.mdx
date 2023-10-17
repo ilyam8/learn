@@ -1,74 +1,146 @@
----
-custom_edit_url: "https://github.com/netdata/go.d.plugin/edit/master/modules/springboot2/README.md"
-sidebar_label: "Java Spring Boot 2 applications"
-learn_status: "Published"
-toc_max_heading_level: "4"
-learn_rel_path: "Data collection/APM"
-description: "Monitor the health and performance of Spring Boot 2-compatible apps with zero configuration, per-second metric granularity, and interactive visualizations."
-sidebar_position: "616160"
-slug: "/data-collection/apm/java-spring-boot-2-applications"
----
+------|:----------|:----|
+| springboot2.response_codes | 1xx, 2xx, 3xx, 4xx, 5xx | requests/s |
+| springboot2.thread | daemon, total | threads |
+| springboot2.heap | free, eden, survivor, old | B |
+| springboot2.heap_eden | used, commited | B |
+| springboot2.heap_survivor | used, commited | B |
+| springboot2.heap_old | used, commited | B |
+| springboot2.uptime | uptime | seconds |
 
 
-# Java Spring Boot 2 application collector
 
-This module monitors one or more Java Spring-boot 2 applications depending on configuration. Netdata can be used to
-monitor running Java [Spring Boot 2](https://spring.io/) applications that expose their metrics with the use of the **
-Spring Boot Actuator** included in Spring Boot library.
+## Alerts
 
-Springboot2 module looks up `http://localhost:8080/actuator/prometheus` and `http://127.0.0.1:8080/actuator/prometheus`
-to detect Spring Boot application by default.
+There are no alerts configured by default for this integration.
 
-## Metrics
 
-All metrics have "springboot2." prefix.
+## Setup
 
-| Metric         | Scope  |        Dimensions         |   Units    |
-|----------------|:------:|:-------------------------:|:----------:|
-| response_codes | global |  1xx, 2xx, 3xx, 4xx, 5xx  | requests/s |
-| thread         | global |       daemon, total       |  threads   |
-| heap           | global | free, eden, survivor, old |     B      |
-| heap_eden      | global |      used, commited       |     B      |
-| heap_survivor  | global |      used, commited       |     B      |
-| heap_old       | global |      used, commited       |     B      |
-| uptime         | global |          uptime           |  seconds   |
+### Prerequisites
 
-## Configuration
+#### Configure Spring Boot Actuator
 
-Edit the `go.d/springboot2.conf` configuration file using `edit-config` from the
-Netdata [config directory](/docs/configuring/configuration), which is typically at `/etc/netdata`.
+The Spring Boot Actuator exposes metrics over HTTP, to use it:
+
+- add `org.springframework.boot:spring-boot-starter-actuator` and `io.micrometer:micrometer-registry-prometheus` to your application dependencies.
+- set `management.endpoints.web.exposure.include=*` in your `application.properties`.
+
+Refer to the [Spring Boot Actuator: Production-ready features](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready.html) and [81. Actuator - Part IX. ‘How-to’ guides](https://docs.spring.io/spring-boot/docs/current/reference/html/howto-actuator.html) for more information.
+
+
+
+### Configuration
+
+#### File
+
+The configuration file name for this integration is `go.d/springboot2.conf`.
+
+
+You can edit the configuration file using the `edit-config` script from the
+Netdata [config directory](/docs/configuring/configuration#the-netdata-config-directory).
 
 ```bash
-cd /etc/netdata # Replace this path with your Netdata config directory
+cd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata
 sudo ./edit-config go.d/springboot2.conf
 ```
+#### Options
 
-The Spring Boot Actuator exposes these metrics over HTTP and is very easy to use:
+The following options can be defined globally: update_every, autodetection_retry.
 
-- add `org.springframework.boot:spring-boot-starter-actuator` and `io.micrometer:micrometer-registry-prometheus` to your
-  application dependencies
-- set `management.endpoints.web.exposure.include=*` in your `application.properties`
 
-Please refer to
-the [Spring Boot Actuator: Production-ready features](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready.html)
-and [81. Actuator - Part IX. ‘How-to’ guides](https://docs.spring.io/spring-boot/docs/current/reference/html/howto-actuator.html)
-for more information.
+<details><summary>Config options</summary>
 
-Here is an example for 2 servers:
+| Name | Description | Default | Required |
+|:----|:-----------|:-------|:--------:|
+| update_every | Data collection frequency. | 1 | False |
+| autodetection_retry | Recheck interval in seconds. Zero means no recheck will be scheduled. | 0 | False |
+| url | Server URL. |  | True |
+| timeout | HTTP request timeout. | 1 | False |
+| username | Username for basic HTTP authentication. |  | False |
+| password | Password for basic HTTP authentication. |  | False |
+| proxy_url | Proxy URL. |  | False |
+| proxy_username | Username for proxy basic HTTP authentication. |  | False |
+| proxy_password | Password for proxy basic HTTP authentication. |  | False |
+| method | HTTP request method. | GET | False |
+| body | HTTP request body. |  | False |
+| headers | HTTP request headers. |  | False |
+| not_follow_redirects | Redirect handling policy. Controls whether the client follows redirects. | no | False |
+| tls_skip_verify | Server certificate chain and hostname validation policy. Controls whether the client performs this check. | no | False |
+| tls_ca | Certification authority that the client uses when verifying the server's certificates. |  | False |
+| tls_cert | Client TLS certificate. |  | False |
+| tls_key | Client TLS key. |  | False |
+
+</details>
+
+#### Examples
+
+##### Basic
+
+A basic example configuration.
 
 ```yaml
 jobs:
   - name: local
-    url: http://localhost:8080/actuator/prometheus
+    url: http://127.0.0.1:8080/actuator/prometheus
+
+```
+##### HTTP authentication
+
+Basic HTTP authentication.
+
+<details><summary>Config</summary>
+
+```yaml
+jobs:
+  - name: local
+    url: http://127.0.0.1:8080/actuator/prometheus
+    username: username
+    password: password
+
+```
+</details>
+
+##### HTTPS with self-signed certificate
+
+Do not validate server certificate chain and hostname.
+
+
+<details><summary>Config</summary>
+
+```yaml
+jobs:
+  - name: local
+    url: https://127.0.0.1:8080/actuator/prometheus
+    tls_skip_verify: yes
+
+```
+</details>
+
+##### Multi-instance
+
+> **Note**: When you define multiple jobs, their names must be unique.
+
+Collecting metrics from local and remote instances.
+
+
+<details><summary>Config</summary>
+
+```yaml
+jobs:
+  - name: local
+    url: http://127.0.0.1:8080/actuator/prometheus
 
   - name: remote
-    url: http://203.0.113.10:8080/actuator/prometheus
-```
+    url: http://192.0.2.1:8080/actuator/prometheus
 
-For all available options please see
-module [configuration file](https://github.com/netdata/go.d.plugin/blob/master/config/go.d/springboot2.conf).
+```
+</details>
+
+
 
 ## Troubleshooting
+
+### Debug Mode
 
 To troubleshoot issues with the `springboot2` collector, run the `go.d.plugin` with the debug option enabled. The output
 should give you clues as to why the collector isn't working.
@@ -91,4 +163,5 @@ should give you clues as to why the collector isn't working.
   ```bash
   ./go.d.plugin -d -m springboot2
   ```
+
 
