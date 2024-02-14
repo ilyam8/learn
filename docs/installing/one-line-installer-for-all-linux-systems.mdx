@@ -31,7 +31,7 @@ To use `md5sum` to verify the integrity of the `kickstart.sh` script you will do
 run the following:
 
 ```bash
-[ "e5813e6d258274cc92873764d524ed47" = "$(curl -Ss https://my-netdata.io/kickstart.sh | md5sum | cut -d ' ' -f 1)" ] && echo "OK, VALID" || echo "FAILED, INVALID"
+[ "76cad9f1c374345f2b3e93d0f316dce2" = "$(curl -Ss https://get.netdata.cloud/kickstart.sh | md5sum | cut -d ' ' -f 1)" ] && echo "OK, VALID" || echo "FAILED, INVALID"
 ```
 
 If the script is valid, this command will return `OK, VALID`.
@@ -148,7 +148,7 @@ By default, the kickstart script will provide a Netdata agent installation that 
 - `--claim-rooms`
   Specify a comma-separated list of tokens for each War Room this node should appear in.
 - `--claim-proxy`
-  Specify a proxy to use when connecting to the cloud in the form of `http://[user:pass@]host:ip` for an HTTP(S) proxy. See [connecting through a proxy](/docs/configuring/connect-agent-to-cloud#connect-through-a-proxy) for details.
+  Specify a proxy to use when connecting to the cloud in the form of `http://[user:pass@]host:ip` for an HTTP(S) proxy. See [connecting through a proxy](https://github.com/netdata/netdata/blob/master/src/claim/README.md#connect-through-a-proxy) for details.
 - `--claim-only`
   If there is an existing install, only try to claim it without attempting to update it. If there is no existing install, install and claim Netdata normally.
 - `--require-cloud`
@@ -182,7 +182,7 @@ By default, the agent is sending anonymous telemetry data to help us take identi
   Show what the installer would do, but don’t actually do any of it.
 - `--dont-start-it`
   Don’t auto-start the daemon after installing. This parameter is not guaranteed to work.
-- `--override-distro`
+- `--distro-override`
   Override the distro detection logic and assume the system is using a specific Linux distribution and release. Takes a single argument consisting of the values of the `ID`, `VERSION_ID`, and `VERSION_CODENAME` fields from `/etc/os-release` for the desired distribution.
 
 The following options are mutually exclusive and specify special operations other than trying to install Netdata normally or update an existing install:

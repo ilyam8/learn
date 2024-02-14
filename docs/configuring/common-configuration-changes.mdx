@@ -39,7 +39,7 @@ to help you determine the exact settings for your desired retention period.
 ### Reduce the data collection frequency
 
 Change `update every` in
-the [`[global]` section](/docs/configuring/daemon-configuration#global-section-options)
+the [`[global]` section](https://github.com/netdata/netdata/blob/master/src/daemon/config/README.md#global-section-options)
 of `netdata.conf` so
 that it is greater than `1`. An `update every` of `5` means the Netdata Agent enforces a _minimum_ collection frequency
 of 5 seconds.
@@ -52,13 +52,13 @@ of 5 seconds.
 Every collector and plugin has its own `update every` setting, which you can also change in the `go.d.conf`,
 `python.d.conf` or `charts.d.conf` files, or in individual collector configuration files. If the `update
 every` for an individual collector is less than the global, the Netdata Agent uses the global setting. See
-the [enable or configure a collector](/docs/configuring/collectors-configuration#enable-and-disable-a-specific-collection-module)
+the [enable or configure a collector](https://github.com/netdata/netdata/blob/master/src/collectors/REFERENCE.md#enable-and-disable-a-specific-collection-module)
 doc for details.
 
 ### Disable a collector or plugin
 
 Turn off entire plugins in
-the [`[plugins]` section](/docs/configuring/daemon-configuration#plugins-section-options)
+the [`[plugins]` section](https://github.com/netdata/netdata/blob/master/src/daemon/config/README.md#plugins-section-options)
 of
 `netdata.conf`.
 
@@ -84,9 +84,9 @@ sudo ./edit-config health.d/example-alert.conf
 
 Or, append your new alert to an existing file by editing a relevant existing file in the `health.d/` directory.
 
-Read more about [configuring alerts](/docs/alerting/health-configuration-reference) to
+Read more about [configuring alerts](https://github.com/netdata/netdata/blob/master/src/health/REFERENCE.md) to
 get started, and see
-the [health monitoring reference](/docs/alerting/health-configuration-reference) for a full listing
+the [health monitoring reference](https://github.com/netdata/netdata/blob/master/src/health/REFERENCE.md) for a full listing
 of options available in health entities.
 
 ### Configure a specific alert
@@ -117,7 +117,7 @@ template: disk_fill_rate
 ### Turn of all alerts and notifications
 
 Set `enabled` to `no` in
-the [`[health]`](/docs/configuring/daemon-configuration#health-section-options)
+the [`[health]`](https://github.com/netdata/netdata/blob/master/src/daemon/config/README.md#health-section-options)
 section of `netdata.conf`.
 
 ### Enable alert notifications

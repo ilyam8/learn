@@ -12,7 +12,7 @@ learn_link: "https://learn.netdata.cloud/docs/exporting/exporting-quickstart"
 # Export metrics to external time-series databases
 
 Netdata allows you to export metrics to external time-series databases with the [exporting
-engine](/docs/exporting/exporting-reference). This system uses a number of **connectors** to initiate connections to [more than
+engine](https://github.com/netdata/netdata/blob/master/src/exporting/README.md). This system uses a number of **connectors** to initiate connections to [more than
 thirty](#supported-databases) supported databases, including InfluxDB, Prometheus, Graphite, ElasticSearch, and much
 more. 
 
@@ -30,7 +30,7 @@ analysis, or correlation with other tools, such as application tracing.
 ## Supported databases
 
 Netdata supports exporting metrics to the following databases through several
-[connectors](/docs/exporting/exporting-reference#features). Once you find the connector that works for your database, open its
+[connectors](https://github.com/netdata/netdata/blob/master/src/exporting/README.md#features). Once you find the connector that works for your database, open its
 documentation and the [enabling a connector](/docs/exporting/enable-an-exporting-connector) doc for details on enabling it.
 
 -   **AppOptics**: [Prometheus remote write](/docs/exporting/prometheus-remote-write)
@@ -62,9 +62,9 @@ documentation and the [enabling a connector](/docs/exporting/enable-an-exporting
     write](/docs/exporting/prometheus-remote-write)
 -   **PostgreSQL**: [Prometheus remote write](/docs/exporting/prometheus-remote-write)
     via [PostgreSQL Prometheus Adapter](https://github.com/CrunchyData/postgresql-prometheus-adapter)
--   **Prometheus**: [Prometheus scraper](/docs/exporting/prometheus)
+-   **Prometheus**: [Prometheus scraper](https://github.com/netdata/netdata/blob/master/src/exporting/prometheus/README.md)
 -   **TimescaleDB**: [Prometheus remote write](/docs/exporting/prometheus-remote-write),
-    [netdata-timescale-relay](https://github.com/netdata/netdata/blob/master/exporting/TIMESCALE.md)
+    [netdata-timescale-relay](https://github.com/netdata/netdata/blob/master/src/exporting/TIMESCALE.md)
 -   **QuasarDB**: [Prometheus remote write](/docs/exporting/prometheus-remote-write)
 -   **SignalFx**: [Prometheus remote write](/docs/exporting/prometheus-remote-write)
 -   **Splunk**: [Prometheus remote write](/docs/exporting/prometheus-remote-write)

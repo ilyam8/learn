@@ -74,7 +74,7 @@ replacing `NODE` with the hostname or IP address of your system.
 There's nothing you need to do to enable [system monitoring](/docs/data-collection/system-metrics) and Linux monitoring with
 the Netdata Agent, which autodetects metrics from CPUs, memory, disks, networking devices, and Linux processes like
 systemd without any configuration. If you're using containers, Netdata automatically collects resource utilization
-metrics from each using the [cgroups data collector](https://github.com/netdata/netdata/blob/master/collectors/cgroups.plugin/README.md).
+metrics from each using the [cgroups data collector](https://github.com/netdata/netdata/blob/master/src/collectors/cgroups.plugin/README.md).
 
 ## Enable Apache monitoring
 
@@ -120,7 +120,7 @@ system](/docs/maintaining/starting-and-stopping-netdata-agents), to collect doze
 ## Enable PHP monitoring
 
 Unlike Apache or MySQL, PHP isn't a service that you can monitor directly, unless you instrument a PHP-based application
-with [StatsD](https://github.com/netdata/netdata/blob/master/collectors/statsd.plugin/README.md).
+with [StatsD](https://github.com/netdata/netdata/blob/master/src/collectors/statsd.plugin/README.md).
 
 However, if you use [PHP-FPM](https://php-fpm.org/) in your LAMP stack, you can monitor that process with our [PHP-FPM
 data collector](/docs/data-collection/web-servers-and-web-proxies/php-fpm).
@@ -169,7 +169,7 @@ If the Netdata Agent isn't already open in your browser, open a new tab and navi
 
 > If you [signed up](https://app.netdata.cloud/sign-up?cloudRoute=/spaces) for Netdata Cloud earlier, you can also view
 > the exact same LAMP stack metrics there, plus additional features, like drag-and-drop custom dashboards. Be sure to
-> [connecting your node](/docs/configuring/connect-agent-to-cloud) to start streaming metrics to your browser through Netdata Cloud.
+> [connecting your node](https://github.com/netdata/netdata/blob/master/src/claim/README.md) to start streaming metrics to your browser through Netdata Cloud.
 
 Netdata automatically organizes all metrics and charts onto a single page for easy navigation. Peek at gauges to see
 overall system performance, then scroll down to see more. Click-and-drag with your mouse to pan _all_ charts back and
@@ -213,7 +213,7 @@ shows any alerts currently triggered, while the **All** tab displays a list of _
 ![An example of LAMP stack
 alerts](https://user-images.githubusercontent.com/1153921/109524120-5883f900-7a6d-11eb-830e-0e7baaa28163.png)
 
-[Tweak alerts](/docs/alerting/health-configuration-reference) based on your infrastructure monitoring needs, and to see these alerts
+[Tweak alerts](https://github.com/netdata/netdata/blob/master/src/health/REFERENCE.md) based on your infrastructure monitoring needs, and to see these alerts
 in other places, like your inbox or a Slack channel, [enable a notification
 method](/docs/alerting/notifications).
 

@@ -56,14 +56,14 @@ metrics](/docs/configuring/optimizing-metrics-database/change-how-long-netdata-s
 #### Data collection
 
 If Netdata didn't autodetect all the hardware, containers, services, or applications running on your node, you should
-learn more about [how data collectors work](/docs/data-collection). If there's a [supported
-collector](/docs/data-collection/monitor-anything) for metrics you need, [configure the collector](/docs/configuring/collectors-configuration)
+learn more about [how data collectors work](https://github.com/netdata/netdata/blob/master/src/collectors/README.md). If there's a [supported
+collector](https://github.com/netdata/netdata/blob/master/src/collectors/COLLECTORS.md) for metrics you need, [configure the collector](https://github.com/netdata/netdata/blob/master/src/collectors/REFERENCE.md)
 or read about its requirements to configure your endpoint to publish metrics in the correct format and endpoint.
 
 #### Alerts & notifications
 
 Netdata comes with hundreds of preconfigured alerts, designed by our monitoring gurus in parallel with our open-source
-community, but you may want to [edit alerts](/docs/alerting/health-configuration-reference) or
+community, but you may want to [edit alerts](https://github.com/netdata/netdata/blob/master/src/health/REFERENCE.md) or
 [enable notifications](/docs/alerting/notifications) to customize your Netdata experience.
 
 #### Make your deployment production ready
@@ -155,7 +155,7 @@ option when you install or update Netdata using the [automatic one-line installa
 script](#automatic-one-line-installation-script).
 
 ```bash
-wget -O /tmp/netdata-kickstart.sh https://my-netdata.io/kickstart.sh && sh /tmp/netdata-kickstart.sh --no-updates
+wget -O /tmp/netdata-kickstart.sh https://get.netdata.cloud/kickstart.sh && sh /tmp/netdata-kickstart.sh --no-updates
 ```
 
 With automatic updates disabled, you can choose exactly when and how you [update
