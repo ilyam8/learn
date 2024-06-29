@@ -95,7 +95,7 @@ Metrics:
 | Metric | Dimensions | Unit |
 |:------|:----------|:----|
 | app.ebpf_call_tcp_v4_connection | connections | connections/s |
-| app.app.ebpf_call_tcp_v6_connection | connections | connections/s |
+| app.ebpf_call_tcp_v6_connection | connections | connections/s |
 | app.ebpf_sock_bytes_sent | bandwidth | kilobits/s |
 | app.ebpf_sock_bytes_received | bandwidth | kilobits/s |
 | app.ebpf_call_tcp_sendmsg | calls | calls/s |
@@ -169,7 +169,7 @@ The configuration file name for this integration is `ebpf.d/network.conf`.
 
 
 You can edit the configuration file using the `edit-config` script from the
-Netdata [config directory](/docs/netdata-agent/configuration#the-netdata-config-directory).
+Netdata [config directory](/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).
 
 ```bash
 cd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata
@@ -180,7 +180,7 @@ sudo ./edit-config ebpf.d/network.conf
 All options are defined inside section `[global]`. Options inside `network connections` are ignored for while.
 
 
-<details><summary>Config options</summary>
+<details open><summary>Config options</summary>
 
 | Name | Description | Default | Required |
 |:----|:-----------|:-------|:--------:|

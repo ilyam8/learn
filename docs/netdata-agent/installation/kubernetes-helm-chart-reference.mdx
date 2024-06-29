@@ -11,9 +11,9 @@ learn_link: "https://learn.netdata.cloud/docs/netdata-agent/installation/kuberne
 
 <a href="https://artifacthub.io/packages/search?repo=netdata" target="_blank" rel="noopener noreferrer"><img loading="lazy" src="https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/netdata" alt="Artifact HUB" class="img_node_modules-@docusaurus-theme-classic-lib-theme-MDXComponents-Img-styles-module"></img></a>
 
-<img src="https://img.shields.io/badge/Version-3.7.84-informational" alt="Version: 3.7.84"></img>
+<img src="https://img.shields.io/badge/Version-3.7.94-informational" alt="Version: 3.7.94"></img>
 
-<img loading="lazy" src="https://img.shields.io/badge/AppVersion-v1.44.3-informational" alt="AppVersion: v1.44.3" class="img_node_modules-@docusaurus-theme-classic-lib-theme-MDXComponents-Img-styles-module"></img>
+<img loading="lazy" src="https://img.shields.io/badge/AppVersion-v1.46.1-informational" alt="AppVersion: v1.46.1" class="img_node_modules-@docusaurus-theme-classic-lib-theme-MDXComponents-Img-styles-module"></img>
 
 _Based on the work of varyumin (https://github.com/varyumin/netdata)_.
 
@@ -82,7 +82,7 @@ section lists the parameters that can be configured during installation.
 > **Tip**: List all releases using `helm list`.
 
 Once the Netdata deployment is up and running, read our guide, [_Monitor a Kubernetes (k8s) cluster with
-Netdata_](/docs/developer-and-contributor-corner/kubernetes-monitoring-with-netdata-overview-and-visualizations), for a breakdown of all the collectors,
+Netdata_](https://github.com/netdata/netdata/blob/master/docs/developer-and-contributor-corner/kubernetes-k8s-netdata.md), for a breakdown of all the collectors,
 metrics, and charts available for health monitoring and performance troubleshooting.
 
 ## Uninstalling the Chart
@@ -160,7 +160,7 @@ The following table lists the configurable parameters of the netdata chart and t
 | `parent.priorityClassName`                    | Pod priority class name for the parent deployment                                                                                                      | `""`                                                                                    |
 | `parent.database.persistence`                 | Whether the parent should use a persistent volume for the DB                                                                                           | `true`                                                                                  |
 | `parent.database.storageclass`                | The storage class for the persistent volume claim of the parent's database store, mounted to `/var/cache/netdata`                                      | the default storage class                                                               |
-| `parent.database.volumesize`                  | The storage space for the PVC of the parent database                                                                                                   | `2Gi`                                                                                   |
+| `parent.database.volumesize`                  | The storage space for the PVC of the parent database                                                                                                   | `5Gi`                                                                                   |
 | `parent.alarms.persistence`                   | Whether the parent should use a persistent volume for the alarms log                                                                                   | `true`                                                                                  |
 | `parent.alarms.storageclass`                  | The storage class for the persistent volume claim of the parent's alarm log, mounted to `/var/lib/netdata`                                             | the default storage class                                                               |
 | `parent.alarms.volumesize`                    | The storage space for the PVC of the parent alarm log                                                                                                  | `1Gi`                                                                                   |
