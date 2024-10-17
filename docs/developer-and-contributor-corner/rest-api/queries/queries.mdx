@@ -3,7 +3,7 @@ custom_edit_url: "https://github.com/netdata/netdata/edit/master/src/web/api/que
 sidebar_label: "Queries"
 learn_status: "Published"
 learn_rel_path: "Developer and Contributor Corner/REST API/Queries"
-sidebar_position: "1302080"
+sidebar_position: "1902080"
 learn_link: "https://learn.netdata.cloud/docs/developer-and-contributor-corner/rest-api/queries/queries"
 ---
 
@@ -13,7 +13,7 @@ This document explains in detail the options available to retrieve data from the
 create custom charts.
 
 The Netdata database can be queried with the `/api/v1/data` and `/api/v1/badge.svg` REST API methods. The database is also queried from the `lookup` line 
-in an [alert configuration](/docs/alerts-&-notifications/health-configuration-reference).
+in an [alert configuration](/src/health/REFERENCE.md).
 
 Every data query accepts the following parameters:
 
@@ -96,7 +96,7 @@ To disable alignment, pass `&options=unaligned` to the query.
 
 To execute the query, the engine evaluates all dimensions of the chart, one after another.
 
-The engine does not evaluate dimensions that do not match the [simple pattern](/docs/developer-and-contributor-corner/libnetdata/simple-patterns)
+The engine does not evaluate dimensions that do not match the [simple pattern](/src/libnetdata/simple_pattern/README.md)
 given at the `dimensions` parameter, except when `options=percentage` is given (this option
 requires all the dimensions to be evaluated to find the percentage of each dimension vs to chart
 total).
