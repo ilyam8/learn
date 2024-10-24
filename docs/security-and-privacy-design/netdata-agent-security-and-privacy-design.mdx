@@ -3,7 +3,7 @@ custom_edit_url: "https://github.com/netdata/netdata/edit/master/docs/security-a
 sidebar_label: "Netdata Agent Security and Privacy Design"
 learn_status: "Published"
 learn_rel_path: "Security and Privacy Design"
-sidebar_position: "1202000"
+sidebar_position: "2002000"
 learn_link: "https://learn.netdata.cloud/docs/security-and-privacy-design/netdata-agent-security-and-privacy-design"
 ---
 
@@ -18,6 +18,10 @@ database server or read application log files to collect raw data, only the proc
 databases, sent to upstream Netdata servers, or archived to external time-series databases.
 
 ## User Data Protection
+
+> **Note**
+>
+> Users are responsible for backing up, recovering, and ensuring their data's availability because Netdata stores data locally on each system due to its decentralized architecture.
 
 The Netdata Agent is programmed to safeguard user data. When collecting data, the raw data does not leave the host. All
 plugins, even those running with escalated capabilities or privileges, perform a hard-coded data collection job. They do
@@ -64,7 +68,7 @@ information can be found [here](https://github.com/netdata/netdata/security/poli
 
 The Netdata agent is resilient against common security threats such as DDoS attacks and SQL injections. For DDoS,
 Netdata agent uses a fixed number of threads for processing requests, providing a cap on the resources that can be
-consumed. It also automatically manages its memory to prevent overutilization. SQL injections are prevented as nothing
+consumed. It also automatically manages its memory to prevent over-utilization. SQL injections are prevented as nothing
 from the UI is passed back to the data collection plugins accessing databases.
 
 Additionally, the Netdata agent is running as a normal, unprivileged, operating system user (a few data collections
