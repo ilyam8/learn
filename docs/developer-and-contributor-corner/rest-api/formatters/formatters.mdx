@@ -3,10 +3,9 @@ custom_edit_url: "https://github.com/netdata/netdata/edit/master/src/web/api/for
 sidebar_label: "Formatters"
 learn_status: "Published"
 learn_rel_path: "Developer and Contributor Corner/REST API/Formatters"
-sidebar_position: "1302120"
+sidebar_position: "7002120"
 learn_link: "https://learn.netdata.cloud/docs/developer-and-contributor-corner/rest-api/formatters/formatters"
 ---
-
 
 # Query formatting
 
@@ -17,18 +16,18 @@ The following formats are supported:
 
 | format|module|content type|description|
 |:----:|:----:|:----------:|:----------|
-| `array`|[ssv](/docs/developer-and-contributor-corner/rest-api/formatters/ssv-formatter)|application/json|a JSON array|
-| `csv`|[csv](/docs/developer-and-contributor-corner/rest-api/formatters/csv-formatter)|text/plain|a text table, comma separated, with a header line (dimension names) and `\r\n` at the end of the lines|
-| `csvjsonarray`|[csv](/docs/developer-and-contributor-corner/rest-api/formatters/csv-formatter)|application/json|a JSON array, with each row as another array (the first row has the dimension names)|
-| `datasource`|[json](/docs/developer-and-contributor-corner/rest-api/formatters/json-formatter)|application/json|a Google Visualization Provider `datasource` javascript callback|
-| `datatable`|[json](/docs/developer-and-contributor-corner/rest-api/formatters/json-formatter)|application/json|a Google `datatable`|
-| `html`|[csv](/docs/developer-and-contributor-corner/rest-api/formatters/csv-formatter)|text/html|an html table|
-| `json`|[json](/docs/developer-and-contributor-corner/rest-api/formatters/json-formatter)|application/json|a JSON object|
-| `jsonp`|[json](/docs/developer-and-contributor-corner/rest-api/formatters/json-formatter)|application/json|a JSONP javascript callback|
-| `markdown`|[csv](/docs/developer-and-contributor-corner/rest-api/formatters/csv-formatter)|text/plain|a markdown table|
-| `ssv`|[ssv](/docs/developer-and-contributor-corner/rest-api/formatters/ssv-formatter)|text/plain|a space separated list of values|
-| `ssvcomma`|[ssv](/docs/developer-and-contributor-corner/rest-api/formatters/ssv-formatter)|text/plain|a comma separated list of values|
-| `tsv`|[csv](/docs/developer-and-contributor-corner/rest-api/formatters/csv-formatter)|text/plain|a TAB delimited `csv` (MS Excel flavor)|
+| `array`|[ssv](/src/web/api/formatters/ssv/README.md)|application/json|a JSON array|
+| `csv`|[csv](/src/web/api/formatters/csv/README.md)|text/plain|a text table, comma separated, with a header line (dimension names) and `\r\n` at the end of the lines|
+| `csvjsonarray`|[csv](/src/web/api/formatters/csv/README.md)|application/json|a JSON array, with each row as another array (the first row has the dimension names)|
+| `datasource`|[json](/src/web/api/formatters/json/README.md)|application/json|a Google Visualization Provider `datasource` javascript callback|
+| `datatable`|[json](/src/web/api/formatters/json/README.md)|application/json|a Google `datatable`|
+| `html`|[csv](/src/web/api/formatters/csv/README.md)|text/html|an html table|
+| `json`|[json](/src/web/api/formatters/json/README.md)|application/json|a JSON object|
+| `jsonp`|[json](/src/web/api/formatters/json/README.md)|application/json|a JSONP javascript callback|
+| `markdown`|[csv](/src/web/api/formatters/csv/README.md)|text/plain|a markdown table|
+| `ssv`|[ssv](/src/web/api/formatters/ssv/README.md)|text/plain|a space separated list of values|
+| `ssvcomma`|[ssv](/src/web/api/formatters/ssv/README.md)|text/plain|a comma separated list of values|
+| `tsv`|[csv](/src/web/api/formatters/csv/README.md)|text/plain|a TAB delimited `csv` (MS Excel flavor)|
 
 For examples of each format, check the relative module documentation.
 
