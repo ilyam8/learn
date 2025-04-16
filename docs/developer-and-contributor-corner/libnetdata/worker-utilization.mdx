@@ -3,10 +3,9 @@ custom_edit_url: "https://github.com/netdata/netdata/edit/master/src/libnetdata/
 sidebar_label: "Worker Utilization"
 learn_status: "Published"
 learn_rel_path: "Developer and Contributor Corner/libnetdata"
-sidebar_position: "1320880"
+sidebar_position: "7020880"
 learn_link: "https://learn.netdata.cloud/docs/developer-and-contributor-corner/libnetdata/worker-utilization"
 ---
-
 
 # Worker Utilization
 
@@ -90,6 +89,6 @@ busy or idle all the time or part of the time. Works well for both thousands of 
 per second and unlimited working time (being totally busy with a single request for
 ages).
 
-The statistics collector is called by the global statistics thread of netdata. So,
+The statistics collector is called by the telemetry thread of netdata. So,
 even if the workers are extremely busy with their jobs, netdata will be able to know
 how busy they are.
